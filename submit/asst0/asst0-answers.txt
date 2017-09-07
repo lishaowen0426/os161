@@ -1,0 +1,102 @@
+Output from git commands
+
+
+1.output of sys161 kernel:
+
+sys161: System/161 release 2.0.3, compiled Aug  5 2015 14:02:38
+
+OS/161 base system version 1.99.08
+Copyright (c) 2000, 2001-2005, 2008-2011, 2013, 2014
+   President and Fellows of Harvard College.  All rights reserved.
+
+Put-your-group-name-here's system version 0 (DUMBVM #1)
+
+292k physical memory available
+Device probe...
+lamebus0 (system main bus)
+emu0 at lamebus0
+ltrace0 at lamebus0
+ltimer0 at lamebus0
+beep0 at ltimer0
+rtclock0 at ltimer0
+lrandom0 at lamebus0
+random0 at lrandom0
+lhd0 at lamebus0
+lhd1 at lamebus0
+lser0 at lamebus0
+con0 at lser0
+
+cpu0: MIPS/161 (System/161 2.x) features 0x0
+OS/161 kernel [? for menu]: 
+
+
+2. output of git log:
+
+commit 3f25642211516b33b464f7852810cbf338d81f03
+Author: wusling <helenzhang250@gmail.com>
+Date:   Thu Sep 7 17:16:25 2017 -0400
+
+    Initial commit of os161 for CPEN331
+
+
+output of git tag:
+
+asst0-start
+
+
+Code reading exercise:
+
+
+Question 1:
+arch/mips/locore/trap.c
+When trap occurs, control transfers from the user software to the OS.
+When an interrupt occurs, control transfers from user software to the kernel. 
+
+Question 2:
+kern/include/syscall.h
+
+Question 3:
+The libc functions in the "common" part is shared by the kernel and the user program. On the other 
+hand, the libc functions in userland/lib/libc are only used by the user programs.
+
+Question 4:
+It configures "target hardware platform and machine type" and "default location of the root of the 
+installed system". The configuration is invalidated if the file name of the root is changed.
+
+Question 5:
+Different machines have different hardware, for example, the number of processors. The implementation 
+of some functions are dependent on the hardware. It's important to maintain the separation so that 
+we don't need to change all the code when we switch to a different machine; we can just change the 
+functions that are affected. By using modularity, the OS codes can be easily used on different machines.
+
+Question 6:
+The size of the trapframe is machine dependent.
+
+Question 7:
+We should rerun configure if we moved the source tree to a different computer that is running a 
+different OS.
+
+Question 8:
+We should rerun bmake depend when we change header file inclusions, or after re-running config. 
+
+Question 9:
+We should rerun bmake when we want to recompile the kernel. We should rerun bmake install if we want
+to copy the kernel to the root folder.
+
+Question 10:
+We need to add code in "~/os161/src/kern/main/menu.c". First, we need to add the command to the 
+list "static const char *opsmenu[]", in the format of"[(command to be typed) Print hello world]". 
+Then, we need to create a function as the following: 
+static int cmd_hello(void)
+{
+	kprintf("Hello world!\n");
+	return EINVAL;
+}
+
+Question 11:
+The OS needs to implement these utilities.
+
+Question 12:
+
+Question 13:
+
