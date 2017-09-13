@@ -48,16 +48,31 @@ Code reading exercise:
 
 
 Question 1:
-arch/mips/locore/trap.c
-When trap occurs, control transfers from the user software to the OS.
-When an interrupt occurs, control transfers from user software to the kernel. 
+First, the trap will raise an exception, which is handled by 
+"~/os161/src/kern/arch/mips/locore/exception-mips1.S", naturally transfering the control from the 
+user to the operating system. The exception handler does some preparation such as saving the 
+existing information in the registers before calling the trap handler. It calls the function "void
+mips_trap(struct trapframe *tf)" in "~/os161/src/kern/arch/mips/locore/trap.c" on line 260 
+"jal mips_trap". The trap handler will examine whether the trap is a system call or an interrupt or 
+something unknown, and calls the appropriate handler. Interrupt has its own error code so that it
+is easily differentiable. When an interrupt causes a trap, the trap handler will "call the interrupt 
+handler and return" as the comment in trap.c says.
 
 Question 2:
-kern/include/syscall.h
+When a system call is used by the user, "~/os161/src/build/userland/lib/libc/syscalls.S" is called. 
+According to the comments starting on line 46, the syscall number is loaded into v0 and jump to 
+the shared syscall code (line 84 in this file). Line 85 "syscall" does the actual system calling 
+and invokes trap. Also, according to the comments in the files, syscalls.S is copied from
+"~/os161/src/userland/lib/libc/arch/mips/syscalls-mips.S", "and then the actual syscalls are appended 
+as lines of the form SYSCALL(symbol, number)" in line 97 to 182. The SYSCALL function is called with
+corresponding parameters stored in registers.
 
 Question 3:
-The libc functions in the "common" part is shared by the kernel and the user program. On the other 
-hand, the libc functions in userland/lib/libc are only used by the user programs.
+The libc functions in the "common" part is shared by the kernel and the user program. This folder 
+doesn't have to include all the c library functions that the user will use. It can be kept clean for 
+the kernel. Also, we will be able to access these library functions when we build the kernel. It's 
+good for debugging. On the other hand, the libc functions in "userland" are only used by the user 
+programs. The user can import more c library functions if needed.
 
 Question 4:
 It configures "target hardware platform and machine type" and "default location of the root of the 
@@ -70,7 +85,10 @@ we don't need to change all the code when we switch to a different machine; we c
 functions that are affected. By using modularity, the OS codes can be easily used on different machines.
 
 Question 6:
-The size of the trapframe is machine dependent.
+The size of the trapframe is 37 registers (uint32_t registers, 4 bytes each) long. In 
+"~/os161/src/kern/arch/mips/include/trapframe.h", the trapframe is defined with 37 registers. 
+Also, in "~/os161/src/kern/arch/mips/locore/trap.c", it is commented above an assert statement (line 
+133) that "trap frame is supposed to be 37 registers long. 
 
 Question 7:
 We should rerun configure if we moved the source tree to a different computer that is running a 
@@ -94,9 +112,16 @@ static int cmd_hello(void)
 }
 
 Question 11:
-The OS needs to implement these utilities.
+The operating system needs to include these utilities so that the user can use these commands 
+within the operating system. When the user is operating within the OS, the user will not have 
+access to the standard utilities, which are outside of the OS.
 
 Question 12:
+The return value of the user's program is used as "exit status code". The OS interprets the return
+value to determine if the user's program has exitted normally. 
 
 Question 13:
-
+First, we need to modify "~/os161/src/build/userland/lib/libc/syscalls.S" by adding the new definition of 
+"SYSCALL(symbol, number)". Then, we need to modify "~/os161/src/kern/arch/mips/syscall/syscall.c" to
+do the actual handling of the new system call. Definition of the call number can be added to syscall.h.
+After the modification is done, we need to rerun bmake and bmake depend before testing the changes.
