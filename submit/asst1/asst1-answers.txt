@@ -1,0 +1,127 @@
+Question 1:
+gdb output:
+
+216	   move a0, s0			/* in delay slot */
+211		boot();
+
+The first funtion executed is boot() in void kmain(char *arguments). The assembly instructionmove a0, s0 
+make the pc jumps to this function.
+
+
+Question 2:
+gdb output:
+
+__start () at ../../arch/sys161/main/start.S:54
+54	   addiu sp, sp, -24
+
+The above is the first assembly instruction that executes. It's an add function in start.S.
+
+
+Question 3:
+gdb output after "break kmain" and "break menu".
+
+(gdb) info breakpoints
+Num     Type           Disp Enb Address    What
+1       breakpoint     keep y   0x800139e4 in kmain at ../../main/main.c:211
+2       breakpoint     keep y   0x80014a0c in menu at ../../main/menu.c:697
+
+
+Question 4:
+The instructions in start.S are executed. First, system sets up boot stack at the top of the physical
+memory and stores its address in a0. Then, the kernel is loaded at virtual address 0x80000200 and the
+end address is stored. After that, a stack frame is set up on the real kernel stack. The exception 
+handler code is copied over to the first page of memory. The TLB is initialized. The status registers
+are set up, including CST_IRQMASK in MIPS. The CPU number is loaded into CONTEXT register. Lastly, the
+GP register is loaded.
+
+
+Question 5:
+gdb output when looking up from kmain:
+
+(gdb) up
+#1  0x8002d7bc in __start () at ../../arch/sys161/main/start.S:216
+216	   move a0, s0			/* in delay slot */
+
+Thus the instruction calls main is "move a0, s0".
+
+
+Question 6:
+The following functions are executed by boot();
+
+(gdb) n
+109		ram_bootstrap();
+(gdb) s
+ram_bootstrap () at ../../arch/mips/vm/ram.c:51
+(gdb) n
+110		proc_bootstrap();
+(gdb) s
+proc_bootstrap () at ../../proc/proc.c:181
+(gdb) n
+111		thread_bootstrap();
+(gdb) s
+thread_bootstrap () at ../../thread/thread.c:357
+(gdb) n
+112		hardclock_bootstrap();
+(gdb) s
+hardclock_bootstrap () at ../../thread/clock.c:68
+(gdb) n
+113		vfs_bootstrap();
+(gdb) s
+vfs_bootstrap () at ../../vfs/vfslist.c:101
+(gdb) n
+114		kheap_nextgeneration();
+(gdb) s
+kheap_nextgeneration () at ../../vm/kmalloc.c:708
+
+
+Question 7:
+Print the *bootcpu value at the first line of thread_bootstrap():
+
+111		thread_bootstrap();
+(gdb) s
+thread_bootstrap () at ../../thread/thread.c:357
+357		cpuarray_init(&allcpus);
+(gdb) p bootcpu
+$1 = (struct cpu *) 0x80000
+
+
+Question 8:
+Print bootcpu after create:
+
+(gdb) n
+368		bootthread = bootcpu->c_curthread;
+(gdb) p bootcpu
+$2 = (struct cpu *) 0x8003af00
+
+
+Question 9:
+Print the allcpus array before boot():
+
+Breakpoint 1, boot () at ../../main/main.c:99
+99		kprintf("\n");
+(gdb) cpuarray allcpus
+0 cpus
+
+
+Question 10:
+Print the allcpus array after boot():
+
+(gdb) finish
+Run till exit from #0  boot () at ../../main/main.c:99
+kmain (arguments=0x80035c20 "") at ../../main/main.c:213
+213		menu(arguments);
+
+(gdb) cpuarray allcpus
+1 cpus
+cpu 0:
+$1 = {c_self = 0x8003af00, c_number = 0, c_hardware_number = 0, 
+  c_curthread = 0x8003bf80, c_zombies = {tl_head = {tln_prev = 0x0, 
+      tln_next = 0x8003af1c, tln_self = 0x0}, tl_tail = {
+      tln_prev = 0x8003af10, tln_next = 0x0, tln_self = 0x0}, tl_count = 0}, 
+  c_hardclocks = 1, c_spinlocks = 0, c_isidle = false, c_runqueue = {
+    tl_head = {tln_prev = 0x0, tln_next = 0x8003af44, tln_self = 0x0}, 
+    tl_tail = {tln_prev = 0x8003af38, tln_next = 0x0, tln_self = 0x0}, 
+    tl_count = 0}, c_runqueue_lock = {splk_lock = 0, splk_holder = 0x0}, 
+  c_ipi_pending = 0, c_shootdown = {{ts_placeholder = 0} <repeats 16 times>}, 
+  c_numshootdown = 0, c_ipi_lock = {splk_lock = 0, splk_holder = 0x0}}
+
