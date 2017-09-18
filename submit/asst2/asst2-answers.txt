@@ -1,0 +1,55 @@
+Question 1:
+In "~/os161/src/kern/thread/thread.c", it defines the steps we take when a thread 
+exits or sleeps. When a thread exits, it is first detached from the process. Then, 
+the stack guard band is checked. Finally, the interrups are turned off from this 
+processor.
+When a thread sleeps, it doesn't do any work until it is waken up, but it is not 
+destroyed. The function wchan_sleep makes thread goes into sleep by queueing it 
+on the wait channel wc, and acquires the spinlock lk to protect the sleeping thread.
+
+
+Question 2:
+Context switch is handled by the function thread_switch() on line 558 of 
+"~/os161/src/kern/thread/thread.c", and the function switchframe_switch defined by
+"~/os161/src/kern/arch/mips/thread/switch.S". The switchframe is initialized by
+switchframe_init() in "~/os161/src/kern/arch/mips/thread/switchframe.c".
+
+
+Question 3:
+States: run, ready, sleep, zombie
+
+Question 4:
+When we turn interrupts off, we don't receive any hardware interupts.
+
+Question 5:
+When a thread wakes up another thread, the function thread_make_runnable() is called 
+on the waken thread. The run queue lock on the target cpu is acquired, so that the waken
+thread can be added to the run queue without interference. A signal is then sent to 
+unidle the running process on the target cpu. Finally, the run queue lock is released
+before the function returns. 
+
+Question 6:
+The function thread_switch() on line 558 of "~/os161/src/kern/thread/thread.c" chooses
+the next thread to run.
+
+Question 7:
+The next thread is the first thread in the runqueue. The runqueue is maintainted such
+that a waken thread is added to the tail.
+If the runqueue is empty, the runqueue lock is released, the cpu idles and try to acquire
+the runqueue lock again to see if new threads become available.
+
+Question 8:
+A hardware time decide when to switch to another thread to execute.
+
+Question 9:
+The funciton wchan_sleep() puts a thread into the wait channel. It is analogous
+to wait in a semaphore. 
+The function wchan_wakeone() grabs a thread from the wait channel and make it 
+run again by calling thread_make_runnable(). It is analogous to signal in a semaphore.
+They implement semaphores such that if no resource available, thread sleeps in the wait 
+channel; and when resource becomes available, thread are waken up from the wait channel
+to run again. There can be multiple threads waiting to be signaled.
+
+Question 10:
+The wait channel lock is acquired.
+
