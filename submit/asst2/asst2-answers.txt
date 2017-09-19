@@ -2,44 +2,84 @@ Question 1:
 In "~/os161/src/kern/thread/thread.c", it defines the steps we take when a thread 
 exits or sleeps. When a thread exits, it is first detached from the process. Then, 
 the stack guard band is checked. Finally, the interrups are turned off from this 
-processor.
+processor and the thread is switched into zombie state.
 When a thread sleeps, it doesn't do any work until it is waken up, but it is not 
 destroyed. The function wchan_sleep makes thread goes into sleep by queueing it 
 on the wait channel wc, and acquires the spinlock lk to protect the sleeping thread.
 
 
 Question 2:
-Context switch is handled by the function thread_switch() on line 558 of 
+Context switch is handled by the function thread_switch() starting on line 558 of 
 "~/os161/src/kern/thread/thread.c", and the function switchframe_switch defined by
 "~/os161/src/kern/arch/mips/thread/switch.S". The switchframe is initialized by
 switchframe_init() in "~/os161/src/kern/arch/mips/thread/switchframe.c".
 
 
 Question 3:
-States: run, ready, sleep, zombie
+The possible states are: run, ready, sleep, zombie.
+When a thread is in "run", it is running and using the cpu resources.
+When a thread is in "ready", it is in the run queue, but it is not running yet. It's
+possible that the thread is just made runnable by calling "thread_make_runnable()", or
+it is just created with "thread_create()", or the cpu is yield to another process by
+calling "thread_yield()".
+When a thread is in "sleep", it is not doing any work, but it is in the wait channel
+and can be waken up again by wchan_wakeone().
+When a thread is in "zombie", it is exited already, but is not destroyed. It cannot 
+be waken up again.
+
 
 Question 4:
-When we turn interrupts off, we don't receive any hardware interupts.
+When we turn interrupts off, we don't receive any hardware signals, including timer
+interrupts. It is accomplished by calling "splhigh()". It's important for context 
+switch to function properly. If the system is interrupted again during the switch,
+the states of the thread can be undetermined, which causes interference with other 
+threads. If the interrputs are not off, it's also possible that a thread that is 
+supposed to be changed to run state never gets the chance to run, but the next 
+thread in queue got to run because it initiates the interrupt during the context switch.
+
 
 Question 5:
-When a thread wakes up another thread, the function thread_make_runnable() is called 
-on the waken thread. The run queue lock on the target cpu is acquired, so that the waken
+When a thread wakes up another thread, the function thread_switch() is called to change
+the status of the thread. Then, the context switch calls thread_make_runnable() on 
+the waken thread. The run queue lock on the target cpu is acquired, so that the waken
 thread can be added to the run queue without interference. A signal is then sent to 
 unidle the running process on the target cpu. Finally, the run queue lock is released
 before the function returns. 
 
+
 Question 6:
-The function thread_switch() on line 558 of "~/os161/src/kern/thread/thread.c" chooses
-the next thread to run.
+The function thread_switch() on line 558 of "~/os161/src/kern/thread/thread.c" takes
+the next thread in the run queue to run.
+The function schedule() on line 820 can reshuffle the run queue. It's periodicallly
+called by hardlock() so that the reshuffle is done. It's not implemented yet, so that
+the run queue is not actually changed by this function for now.
+The function thread_consider_migration() on line 846 is also called periodically by
+hardlock(). It can move threads to other idle cpus, which also decides the order of threads
+to run in a way.
+
 
 Question 7:
-The next thread is the first thread in the runqueue. The runqueue is maintainted such
-that a waken thread is added to the tail.
-If the runqueue is empty, the runqueue lock is released, the cpu idles and try to acquire
-the runqueue lock again to see if new threads become available.
+The function thread_switch() chooses the first thread in the runqueue. The runqueue is 
+maintainted such that a waken thread is added to the tail. If the runqueue is empty, 
+the runqueue lock is released, the cpu idles and try to acquire the runqueue lock 
+again to see if new threads become available.
+The function schedule() doesn't do anything now because it is not implemented yet. It
+supposes to choose the threads with highest priority to run next.
+The function thread_consider_migration() finds idle cpus and append the head element
+from the current cpu's run queue to the tail of the free cpu's run queue. The thread
+gets to run first depends on the ordering of cpu, but generally the thread in the 
+front of the run queue get to run first.
+
 
 Question 8:
-A hardware time decide when to switch to another thread to execute.
+Hardware timer calls schedule() and thread_consider_migration() periodically. It makes
+sure that threads are reshuffled based on priority and threads are evenly spread across
+cpus. It also calls thread_yield() to switch between threads.
+The function hardclock() on line 93 of "~/os161/src/kern/thread/clock.c "is called
+"HZ times a second (on each processor) by the timer". It then calls schedule() and
+thread_consider_migration(), and yield the current thread. After the current thread
+is yielded, context switch gets the next thread in the run queue to run.
+
 
 Question 9:
 The funciton wchan_sleep() puts a thread into the wait channel. It is analogous
@@ -50,6 +90,12 @@ They implement semaphores such that if no resource available, thread sleeps in t
 channel; and when resource becomes available, thread are waken up from the wait channel
 to run again. There can be multiple threads waiting to be signaled.
 
+
 Question 10:
-The wait channel lock is acquired.
+The wait channel wc is associated with the spin lock lk. Before the thread is put into
+the wc, lk is acquired. The wc is locked while the thread is preparing to go to sleep,
+until it is actually placed into the wc. No wakeup signals are accepted. After the 
+thread is in the wc, lk is released so that another thread can attempt to grab the 
+lock and wake a thread in the wc. The sleeping thread is protected by lk such that 
+it will not miss a wakeup signal.
 
