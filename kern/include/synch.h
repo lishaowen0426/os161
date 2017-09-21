@@ -79,10 +79,10 @@ struct lock {
         
         struct cpu *lk_holder;
         
-        //struct wchan *lk_wchan;
-	    //struct spinlock lk_slock;
+        struct wchan *lk_wchan;
+	    struct spinlock lk_slock;
 	    
-	    struct semaphore *lk_sem;
+	    //struct semaphore *lk_sem;
 };
 
 struct lock *lock_create(const char *name);
