@@ -40,6 +40,9 @@
 #include <current.h>
 #include <synch.h>
 
+//added library
+#include <cpu.h>
+
 ////////////////////////////////////////////////////////////
 //
 // Semaphore.
@@ -155,7 +158,26 @@ lock_create(const char *name)
         }
 
         // add stuff here as needed
-
+        
+        /*
+        // initialize wait channel for lock
+        lock->lk_wchan = wchan_create(lock->lk_name);
+        //check if success
+        if(lock->lk_wchan == NULL){
+            kfree(lock->lk_name);
+            kfree(lock);
+            return NULL;
+        }
+        */
+        // initialize spinlock for wait channel
+        //spinlock_init(&lock->lk_slock);
+        
+        
+        // initialize such that no cpu holds the lock
+        lock->lk_holder = NULL;
+        
+        lock->lk_sem = sem_create(name, 1);
+        
         return lock;
 }
 
@@ -165,7 +187,14 @@ lock_destroy(struct lock *lock)
         KASSERT(lock != NULL);
 
         // add stuff here as needed
-
+        // cleanup wait channel
+        
+        //spinlock_cleanup(&lock->lk_slock);
+        /*
+        wchan_destroy(lock->lk_wchan);
+        */
+        sem_destroy(lock->lk_sem);
+        
         kfree(lock->lk_name);
         kfree(lock);
 }
@@ -176,6 +205,54 @@ lock_acquire(struct lock *lock)
         // Write this
 
         (void)lock;  // suppress warning until code gets written
+        
+        KASSERT(lock != NULL);
+        
+        KASSERT(curthread->t_in_interrupt == false);
+        
+        /*
+        struct cpu *mycpu;
+        //splraise(IPL_NONE, IPL_HIGH);
+        splhigh();
+        
+        //get the pointer to the current cpu
+        if (CURCPU_EXISTS()) {
+		    mycpu = curcpu->c_self;
+		    if (lock->lk_holder == mycpu) {
+		        //current cpu is already holding the lock
+			    panic("Deadlock on lock %p\n", lock);
+		    }
+		    //mycpu->c_spinlocks++;
+	     }
+	     else {
+		    mycpu = NULL;
+	     }
+	     */
+	    //grab spinlock to protect wait channel 
+	    //spinlock_acquire(&lock->lk_slock);
+	    /*
+        while(lock->lk_holder != NULL){
+            wchan_sleep(lock->lk_wchan, &lock->wchan_lock);
+        
+        }
+        
+        KASSERT(lock->lk_holder == NULL);
+        lock->lk_holder = mycpu;
+        spinlock_release(&lock->wchan_lock);
+        */
+        /* 
+	     if(!lock->lk_holder){
+	         membar_store_any();
+	         lock->lk_holder = mycpu;
+	     }else{
+	         //add cpu to queue, put it to sleep
+	     }
+	     */
+	     
+	     P(lock->lk_sem);
+	     lock->lk_holder = curcpu->c_self;
+	     
+	     //spinlock_release(&lock->lk_slock);
 }
 
 void
@@ -184,6 +261,39 @@ lock_release(struct lock *lock)
         // Write this
 
         (void)lock;  // suppress warning until code gets written
+        
+        KASSERT(lock != NULL);
+        KASSERT(lock->lk_holder == curcpu->c_self);
+        
+        
+        //spinlock_acquire(&lock->lk_slock);
+        /*
+        lock->lk_holder = NULL;
+        
+        KASSERT(lock->lk_holder == NULL);
+        wchan_wakeone(lock->lk_wchan, &lock->wchan_lock);
+        
+        spinlock_release(&lock->wchan_lock);
+        */
+        
+        /*
+        if (CURCPU_EXISTS()) {
+		KASSERT(lock->lk_holder == curcpu->c_self);
+		//KASSERT(curcpu->c_spinlocks > 0);
+		//curcpu->c_spinlocks--;
+	    }
+	    
+        //check wait queue, if not empty
+	    lock->lk_holder = NULL;
+	    membar_any_store();
+	    //spinlock_data_set(&splk->splk_lock, 0);
+	    spllower(IPL_HIGH, IPL_NONE);
+	    */
+	    
+	    V(lock->lk_sem);
+	    lock->lk_holder = NULL;
+	    
+	    //spinlock_release(&lock->lk_slock);
 }
 
 bool
@@ -193,7 +303,13 @@ lock_do_i_hold(struct lock *lock)
 
         (void)lock;  // suppress warning until code gets written
 
-        return true; // dummy until code gets written
+        //return true; // dummy until code gets written
+        
+        if(!CURCPU_EXISTS()){
+            return true;
+        }
+        
+        return (lock->lk_holder == curcpu->c_self);
 }
 
 ////////////////////////////////////////////////////////////
