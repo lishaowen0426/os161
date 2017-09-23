@@ -1,13 +1,8 @@
-# Kernel config file using dumbvm.
-# This should be used until you have your own VM system.
-#
-# This config builds with optimization for performance testing.
-#
+# Kernel config file for doing the synchronization problems.
 
 include conf/conf.kern		# get definitions of available options
 
-#debug				# Optimizing compile (no debug).
-options noasserts		# Disable assertions.
+debug				# Compile with debug info.
 
 #
 # Device drivers for hardware.
@@ -34,6 +29,5 @@ options sfs			# Always use the file system
 #options netfs			# You might write this as a project.
 
 options dumbvm			# Chewing gum and baling wire.
-
-#options synchprobs		# Enable this only when doing the
+options synchprobs		# Enable this only when doing the
 				# synchronization problems.

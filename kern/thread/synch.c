@@ -192,6 +192,7 @@ lock_destroy(struct lock *lock)
         // free the fields
         kfree(lock->lk_name);
         kfree(lock->lk_holder);
+
         kfree(lock);
 }
 
@@ -231,6 +232,7 @@ lock_acquire(struct lock *lock)
         
         //release the spinlock for the wait channel
         spinlock_release(&lock->lk_slock);        
+
 
 }
 
@@ -285,6 +287,7 @@ lock_do_i_hold(struct lock *lock)
         spinlock_release(&lock->lk_slock);
         
         return i_hold;
+
 }
 
 ////////////////////////////////////////////////////////////
@@ -322,7 +325,6 @@ cv_create(const char *name)
         // initialize spinlock for wait channel
         spinlock_init(&cv->cv_slock);
 
-
         return cv;
 }
 
@@ -338,7 +340,6 @@ cv_destroy(struct cv *cv)
         
         // destroy wait channel
         wchan_destroy(cv->cv_wchan);
-
 
         kfree(cv->cv_name);
         kfree(cv);
@@ -410,4 +411,5 @@ cv_broadcast(struct cv *cv, struct lock *lock)
 	spinlock_acquire(&cv->cv_slock);
 	wchan_wakeall(cv->cv_wchan, &cv->cv_slock);
 	spinlock_release(&cv->cv_slock);
+
 }
