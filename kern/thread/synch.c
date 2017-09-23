@@ -209,7 +209,7 @@ lock_acquire(struct lock *lock)
         KASSERT(curthread->t_in_interrupt == false);
         
         //grab spinlock to protect wait channel 
-	    spinlock_acquire(&lock->lk_slock);
+        spinlock_acquire(&lock->lk_slock);
         
         //check for deadlock	    
         if(lock->lk_holder == curthread->t_name){

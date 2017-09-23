@@ -79,7 +79,7 @@ struct lock {
         
         char *lk_holder;
         struct wchan *lk_wchan;
-	    struct spinlock lk_slock;
+        struct spinlock lk_slock;
 
 };
 
@@ -122,7 +122,7 @@ struct cv {
         // (don't forget to mark things volatile as needed)
         
         struct wchan *cv_wchan;
-	    struct spinlock cv_slock;
+        struct spinlock cv_slock;
 };
 
 struct cv *cv_create(const char *name);
