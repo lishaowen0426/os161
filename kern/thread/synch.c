@@ -40,9 +40,6 @@
 #include <current.h>
 #include <synch.h>
 
-//added library
-#include <cpu.h>
-
 ////////////////////////////////////////////////////////////
 //
 // Semaphore.
@@ -176,8 +173,6 @@ lock_create(const char *name)
         // initialize such that no cpu holds the lock
         lock->lk_holder = NULL;
         
-        //lock->lk_sem = sem_create(name, 1);
-        
         return lock;
 }
 
@@ -187,14 +182,14 @@ lock_destroy(struct lock *lock)
         KASSERT(lock != NULL);
 
         // add stuff here as needed
-        // cleanup wait channel
         
+        // cleanup spinlock
         spinlock_cleanup(&lock->lk_slock);
         
+        // destroy wait channel
         wchan_destroy(lock->lk_wchan);
         
-        //sem_destroy(lock->lk_sem);
-        
+        // free the fields
         kfree(lock->lk_name);
         kfree(lock->lk_holder);
         kfree(lock);
@@ -207,50 +202,36 @@ lock_acquire(struct lock *lock)
 
         (void)lock;  // suppress warning until code gets written
         
+        //check if lock exists
         KASSERT(lock != NULL);
         
+        //check interrupt
         KASSERT(curthread->t_in_interrupt == false);
         
         //grab spinlock to protect wait channel 
 	    spinlock_acquire(&lock->lk_slock);
+        
+        //check for deadlock	    
+        if(lock->lk_holder == curthread->t_name){
+             panic("Deadlock on lock %p\n", lock);
+        }	    
         	    
+        //check if someone holds the lock already
+        //put the thread to sleep and wait	    
         while(lock->lk_holder != NULL){
             wchan_sleep(lock->lk_wchan, &lock->lk_slock);
         
         }
-         
-        struct cpu *mycpu;
-        
-        //get the pointer to the current cpu
-        if (CURCPU_EXISTS()) {
-		    mycpu = curcpu->c_self;
-		    if (lock->lk_holder == mycpu) {
-		        //current cpu is already holding the lock
-			    panic("Deadlock on lock %p\n", lock);
-		    }
-		    //mycpu->c_spinlocks++;
-	     }
-	     else {
-		    mycpu = NULL;
-	     }
-        
+
+        //make sure no one hold the lock
         KASSERT(lock->lk_holder == NULL);
-        lock->lk_holder = mycpu;
-        spinlock_release(&lock->lk_slock);
         
-        /* 
-	     if(!lock->lk_holder){
-	         membar_store_any();
-	         lock->lk_holder = mycpu;
-	     }else{
-	         //add cpu to queue, put it to sleep
-	     }
-	     */
-	     
-	     //P(lock->lk_sem);
-	     //lock->lk_holder = curcpu->c_self;
-	     
-	     //spinlock_release(&lock->lk_slock);
+        //change the lock holder to the current thread
+        lock->lk_holder = curthread->t_name;
+        
+        //release the spinlock for the wait channel
+        spinlock_release(&lock->lk_slock);        
+
 }
 
 void
@@ -260,38 +241,27 @@ lock_release(struct lock *lock)
 
         (void)lock;  // suppress warning until code gets written
         
+        //check if lock exist
         KASSERT(lock != NULL);
-        KASSERT(lock->lk_holder == curcpu->c_self);
         
+        //make sure current thread holds the lock
+        KASSERT(lock_do_i_hold(lock));
         
+        //grab spinlock to protect wait channel
         spinlock_acquire(&lock->lk_slock);
         
+        //change lock holder to no one
         lock->lk_holder = NULL;
         
+        //make sure it is changed successfully
         KASSERT(lock->lk_holder == NULL);
+        
+        //wake a waiting thread from the wait channel
         wchan_wakeone(lock->lk_wchan, &lock->lk_slock);
         
+        //release the spinlock for the wait channel
         spinlock_release(&lock->lk_slock);
         
-        
-        /*
-        if (CURCPU_EXISTS()) {
-		KASSERT(lock->lk_holder == curcpu->c_self);
-		//KASSERT(curcpu->c_spinlocks > 0);
-		//curcpu->c_spinlocks--;
-	    }
-	    
-        //check wait queue, if not empty
-	    lock->lk_holder = NULL;
-	    membar_any_store();
-	    //spinlock_data_set(&splk->splk_lock, 0);
-	    spllower(IPL_HIGH, IPL_NONE);
-	    */
-	    
-	    //V(lock->lk_sem);
-	    //lock->lk_holder = NULL;
-	    
-	    //spinlock_release(&lock->lk_slock);
 }
 
 bool
@@ -303,12 +273,15 @@ lock_do_i_hold(struct lock *lock)
 
         //return true; // dummy until code gets written
         
+        //make sure current cpu exists
         if(!CURCPU_EXISTS()){
             return true;
         }
         
+        //check the lock holder field
+        //make sure there is no interrupt while checking
         spinlock_acquire(&lock->lk_slock);
-        bool i_hold = (lock->lk_holder == curcpu->c_self);
+        bool i_hold = (lock->lk_holder == curthread->t_name);
         spinlock_release(&lock->lk_slock);
         
         return i_hold;
@@ -336,6 +309,19 @@ cv_create(const char *name)
         }
 
         // add stuff here as needed
+      
+        // initialize wait channel for cv
+        cv->cv_wchan = wchan_create(cv->cv_name);
+        //check if success
+        if(cv->cv_wchan == NULL){
+            kfree(cv->cv_name);
+            kfree(cv);
+            return NULL;
+        }
+        
+        // initialize spinlock for wait channel
+        spinlock_init(&cv->cv_slock);
+
 
         return cv;
 }
@@ -346,6 +332,13 @@ cv_destroy(struct cv *cv)
         KASSERT(cv != NULL);
 
         // add stuff here as needed
+   
+        // cleanup spinlock
+        spinlock_cleanup(&cv->cv_slock);
+        
+        // destroy wait channel
+        wchan_destroy(cv->cv_wchan);
+
 
         kfree(cv->cv_name);
         kfree(cv);
@@ -357,6 +350,30 @@ cv_wait(struct cv *cv, struct lock *lock)
         // Write this
         (void)cv;    // suppress warning until code gets written
         (void)lock;  // suppress warning until code gets written
+        
+        //check if cv and lock exist
+        KASSERT(cv != NULL);
+        KASSERT(lock != NULL);
+        
+        //make sure current thread holds the lock
+        KASSERT(lock_do_i_hold(lock));
+        
+        //release the lock and make the current thread goes to sleep in atomic operation
+        spinlock_acquire(&cv->cv_slock);
+        
+        lock_release(lock);
+        wchan_sleep(cv->cv_wchan, &cv->cv_slock);
+        
+        //release the spinlock so that another spinlock can be used by lock
+        //it will not cause race condition because lock provides synchronization
+        spinlock_release(&cv->cv_slock);
+        
+        //the thread is waken, grab the lock again
+        lock_acquire(lock);
+        
+        //check if the lock is acquired successfully
+        KASSERT(lock_do_i_hold(lock));
+        
 }
 
 void
@@ -365,6 +382,16 @@ cv_signal(struct cv *cv, struct lock *lock)
         // Write this
 	(void)cv;    // suppress warning until code gets written
 	(void)lock;  // suppress warning until code gets written
+	
+	//make sure cv and lock exist
+	KASSERT(lock != NULL);
+	KASSERT(cv != NULL);
+	
+	//wake up a thread from the wait channel
+	//grab the spinlock to protect the wait channel
+	spinlock_acquire(&cv->cv_slock);
+	wchan_wakeone(cv->cv_wchan, &cv->cv_slock);
+	spinlock_release(&cv->cv_slock);
 }
 
 void
@@ -373,4 +400,14 @@ cv_broadcast(struct cv *cv, struct lock *lock)
 	// Write this
 	(void)cv;    // suppress warning until code gets written
 	(void)lock;  // suppress warning until code gets written
+	
+	//make sure cv and lock exist
+	KASSERT(lock != NULL);
+	KASSERT(cv != NULL);
+	
+	//wake up all threads in the wait channel
+	//grab the spinlock to protect the wait channel
+	spinlock_acquire(&cv->cv_slock);
+	wchan_wakeall(cv->cv_wchan, &cv->cv_slock);
+	spinlock_release(&cv->cv_slock);
 }
