@@ -20,7 +20,7 @@ typedef struct rope_map{
     
     //record the connected rope of the stake such that
     //rmap_rope_num[n] = k
-    //means stake #n is connected to rope #k
+    //means stake #k is connected to rope #n
     int rmap_rope_num[NROPES];
 } balloon_rope_map;
 
@@ -32,7 +32,7 @@ balloon_rope_map map;
 //#define status_lk_name "rmap_status"
 //#define stake_lk_name "stake_lock"
 static struct lock* rope_status_lock;
-static struct lock* stake_lock;
+//static struct lock* stake_lock;
 
 static struct lock* balloon_lock;
 static struct cv* escape_cv;
@@ -84,6 +84,8 @@ dandelion(void *p, unsigned long arg)
 	}
 	
 	kprintf("Dandelion thread done\n");
+	
+	cv_signal(escape_cv, balloon_lock);
 }
 
 static
@@ -101,29 +103,33 @@ marigold(void *p, unsigned long arg)
 	    int rand_rope = 0;
 	    
 	    lock_acquire(rope_status_lock);
+	    //lock_acquire(stake_lock);
 	    
 	    if(ropes_left == 0){
 	        lock_release(rope_status_lock);
+	        //lock_release(stake_lock);
 	        break;
 	    }
 	    
 	    do{
-	        rand_stake = random() % NROPES;
-	        rand_rope = map.rmap_rope_num[rand_stake];
+	        rand_rope = random() % NROPES;
+	        rand_stake = map.rmap_rope_num[rand_rope];
 	        //kprintf("rand = %d", rand_rope);
 	    }while(map.rmap_status[rand_rope] == 0);
 	    
 	    map.rmap_status[rand_rope] = 0;
 	    ropes_left--;
 	    
-	    lock_release(rope_status_lock);
-	    
 	    kprintf("Marigold severed rope %d from stake %d\n", rand_rope, rand_stake);
+	    
+	    lock_release(rope_status_lock);
+	    //lock_release(stake_lock);
+	    
 	    
 	    thread_yield();
 	
 	}
-	cv_signal(escape_cv, balloon_lock);
+	
 	kprintf("Marigold thread done\n");
 }
 
@@ -137,11 +143,46 @@ flowerkiller(void *p, unsigned long arg)
 	kprintf("Lord FlowerKiller thread starting\n");
 
 	// Implement this function
-	/*
-	while(ropes_left != 0){
 	
+	while(ropes_left != 0){
+	    int rand_stake = 0;
+	    int present_stake = 0;
+	    
+	    int rand_rope = 0;
+	    //int rand_rope_2 = 0;
+	    
+	    lock_acquire(rope_status_lock);
+	    //lock_acquire(stake_lock);
+	    
+	    if(ropes_left == 0){
+	        
+	        //lock_release(stake_lock);
+	        lock_release(rope_status_lock);
+	        break;
+	    }
+	    
+	    do{
+	        rand_rope = random() % NROPES;
+	        rand_stake = random() % NROPES;
+	        present_stake = map.rmap_rope_num[rand_rope];
+	        //rand_rope_1 = map.rmap_rope_num[rand_stake_1];
+	        //rand_rope_2 = map.rmap_rope_num[rand_stake_2];
+	        //kprintf("rand = %d", rand_rope);
+	    }while(map.rmap_status[rand_rope] == 0);
+	
+	    map.rmap_rope_num[rand_rope] = rand_stake;
+	
+	    kprintf("Lord FlowerKiller switched rope %d from stake %d to stake %d\n", rand_rope, present_stake, rand_stake);
+	    
+	    //lock_release(stake_lock);
+	    lock_release(rope_status_lock); 
+	    
+	    thread_yield();   
+	    
 	}
-	*/
+	
+	
+	
 	kprintf("Lord FlowerKiller thread done\n");
 }
 
@@ -159,9 +200,10 @@ balloon(void *p, unsigned long arg)
 	cv_wait(escape_cv, balloon_lock);
 	lock_release(balloon_lock);
 	
-	cv_signal(main_program_cv, balloon_lock);
 	kprintf("Balloon freed and Prince Dandelion escapes!\n");
 	kprintf("Balloon thread done\n");
+	
+	cv_signal(main_program_cv, balloon_lock);
 }
 
 
@@ -180,7 +222,7 @@ airballoon(int nargs, char **args)
 	ropes_left = NROPES;
 	
 	rope_status_lock = lock_create("rmap_status_lock");
-	stake_lock = lock_create("stake_lock");
+	//stake_lock = lock_create("stake_lock");
 	
 	escape_cv = cv_create("escape_cv");
 	main_program_cv = cv_create("main_program_cv");
@@ -222,6 +264,12 @@ done:
     lock_acquire(balloon_lock);
 	cv_wait(main_program_cv, balloon_lock);
 	lock_release(balloon_lock);
+    
+    //destroy locks and cvs
+    lock_destroy(rope_status_lock);
+    lock_destroy(balloon_lock);
+    cv_destroy(escape_cv);
+    cv_destroy(main_program_cv);
 
     kprintf("Main thread done\n");
     
