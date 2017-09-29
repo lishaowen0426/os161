@@ -31,8 +31,8 @@ balloon_rope_map map;
 // Synchronization primitives
 //#define status_lk_name "rmap_status"
 //#define stake_lk_name "stake_lock"
-static struct lock* rope_status_lock;
-//static struct lock* stake_lock;
+static struct lock* rope_status_lock[NROPES];
+static struct lock* rope_num_lock;
 
 static struct lock* balloon_lock;
 static struct cv* escape_cv;
@@ -59,30 +59,45 @@ dandelion(void *p, unsigned long arg)
 
 	// Implement this function
 	while(ropes_left != 0){
-	    int rand_rope = 0;
+	    int rand_rope = random() % NROPES;
 	    
-	    lock_acquire(rope_status_lock);
+	    /*
+	    lock_acquire(rope_status_lock[0]);
 	    
 	    if(ropes_left == 0){
-	        lock_release(rope_status_lock);
+	        lock_release(rope_status_lock[0]);
 	        break;
 	    }
+	    */
+	    lock_acquire(rope_status_lock[rand_rope]);
 	    
-	    do{
+	    while(map.rmap_status[rand_rope] == 0){
+	        lock_release(rope_status_lock[rand_rope]);
 	        rand_rope = random() % NROPES;
+	        lock_acquire(rope_status_lock[rand_rope]);
 	        //kprintf("rand = %d", rand_rope);
-	    }while(map.rmap_status[rand_rope] == 0);
+	        if(ropes_left == 0){
+	            lock_release(rope_status_lock[rand_rope]);
+	            goto dandelion_done;
+	        }
+	    }
 	    
 	    map.rmap_status[rand_rope] = 0;
+	    
+	    lock_acquire(rope_num_lock);
 	    ropes_left--;
-	    
-	    lock_release(rope_status_lock);
-	    
+	    //kprintf("ropes left = %d\n", ropes_left);
 	    kprintf("Dandelion severed rope %d\n", rand_rope);
+	    
+	    lock_release(rope_num_lock);
+	    
+	    lock_release(rope_status_lock[rand_rope]);
+	    
 	    
 	    thread_yield();
 	}
-	
+
+dandelion_done:	
 	kprintf("Dandelion thread done\n");
 	
 	cv_signal(escape_cv, balloon_lock);
@@ -99,30 +114,45 @@ marigold(void *p, unsigned long arg)
 
 	// Implement this function
 	while(ropes_left != 0){
-	    int rand_stake = 0;
-	    int rand_rope = 0;
+	    int rand_rope = random() % NROPES;
+	    int rand_stake = map.rmap_rope_num[rand_rope];
 	    
-	    lock_acquire(rope_status_lock);
+	    lock_acquire(rope_status_lock[rand_rope]);
+	    
+	    /*
+	    lock_acquire(rope_status_lock[0]);
 	    //lock_acquire(stake_lock);
 	    
 	    if(ropes_left == 0){
-	        lock_release(rope_status_lock);
+	        lock_release(rope_status_lock[0]);
 	        //lock_release(stake_lock);
 	        break;
 	    }
+	    */
 	    
-	    do{
+	    while(map.rmap_status[rand_rope] == 0){
+	        lock_release(rope_status_lock[rand_rope]);
+	        
 	        rand_rope = random() % NROPES;
 	        rand_stake = map.rmap_rope_num[rand_rope];
+	        
+	        lock_acquire(rope_status_lock[rand_rope]);
 	        //kprintf("rand = %d", rand_rope);
-	    }while(map.rmap_status[rand_rope] == 0);
+	        if(ropes_left == 0){
+	            lock_release(rope_status_lock[rand_rope]);
+	            goto marigold_done;
+	        }
+	    }
 	    
 	    map.rmap_status[rand_rope] = 0;
+	    
+	    lock_acquire(rope_num_lock);
 	    ropes_left--;
-	    
+	    //kprintf("ropes_left = %d\n", ropes_left);
 	    kprintf("Marigold severed rope %d from stake %d\n", rand_rope, rand_stake);
+	    lock_release(rope_num_lock);
 	    
-	    lock_release(rope_status_lock);
+	    lock_release(rope_status_lock[rand_rope]);
 	    //lock_release(stake_lock);
 	    
 	    
@@ -130,7 +160,9 @@ marigold(void *p, unsigned long arg)
 	
 	}
 	
+marigold_done:	
 	kprintf("Marigold thread done\n");
+	
 }
 
 static
@@ -145,44 +177,60 @@ flowerkiller(void *p, unsigned long arg)
 	// Implement this function
 	
 	while(ropes_left != 0){
-	    int rand_stake = 0;
-	    int present_stake = 0;
+	    int rand_rope = random() % NROPES;
+	    int rand_stake = random() % NROPES;
+	    int present_stake = map.rmap_rope_num[rand_rope];
 	    
-	    int rand_rope = 0;
-	    //int rand_rope_2 = 0;
+	    while(rand_stake == present_stake){
+	        rand_stake = random () % NROPES;
+	    }
 	    
-	    lock_acquire(rope_status_lock);
+	    /*
+	    lock_acquire(rope_status_lock[0]);
 	    //lock_acquire(stake_lock);
 	    
 	    if(ropes_left == 0){
 	        
 	        //lock_release(stake_lock);
-	        lock_release(rope_status_lock);
+	        lock_release(rope_status_lock[0]);
 	        break;
 	    }
+	    */
 	    
-	    do{
+	    lock_acquire(rope_status_lock[rand_rope]);
+	    
+	    while(map.rmap_status[rand_rope] == 0){
+	        lock_release(rope_status_lock[rand_rope]);
+	        
 	        rand_rope = random() % NROPES;
 	        rand_stake = random() % NROPES;
 	        present_stake = map.rmap_rope_num[rand_rope];
-	        //rand_rope_1 = map.rmap_rope_num[rand_stake_1];
-	        //rand_rope_2 = map.rmap_rope_num[rand_stake_2];
-	        //kprintf("rand = %d", rand_rope);
-	    }while(map.rmap_status[rand_rope] == 0);
+	        
+	        while(rand_stake == present_stake){
+	            rand_stake = random () % NROPES;
+	        }
+	        
+	        lock_acquire(rope_status_lock[rand_rope]);
+	        
+	        if(ropes_left == 0){
+	            lock_release(rope_status_lock[rand_rope]);
+	            goto flowerkiller_done;
+	        }
+	    }
 	
 	    map.rmap_rope_num[rand_rope] = rand_stake;
 	
 	    kprintf("Lord FlowerKiller switched rope %d from stake %d to stake %d\n", rand_rope, present_stake, rand_stake);
 	    
 	    //lock_release(stake_lock);
-	    lock_release(rope_status_lock); 
+	    lock_release(rope_status_lock[rand_rope]); 
 	    
 	    thread_yield();   
 	    
 	}
 	
 	
-	
+flowerkiller_done:	
 	kprintf("Lord FlowerKiller thread done\n");
 }
 
@@ -221,14 +269,19 @@ airballoon(int nargs, char **args)
 	//initialize data structure
 	ropes_left = NROPES;
 	
-	rope_status_lock = lock_create("rmap_status_lock");
-	//stake_lock = lock_create("stake_lock");
+	
+	int count = 0;
+	
+	for(count = 0; count < NROPES; count++){
+	    rope_status_lock[count] = lock_create("rmap_status_lock_" + count);
+	}
+	
+	rope_num_lock = lock_create("rope_num_lock");
 	
 	escape_cv = cv_create("escape_cv");
 	main_program_cv = cv_create("main_program_cv");
 	balloon_lock = lock_create("balloon lock");
 	
-	int count = 0;
 	
 	for(count = 0; count < NROPES; count ++){
 	    map.rmap_status[count] = 1;
@@ -266,7 +319,10 @@ done:
 	lock_release(balloon_lock);
     
     //destroy locks and cvs
-    lock_destroy(rope_status_lock);
+    for(count = 0; count < NROPES; count++){
+        lock_destroy(rope_status_lock[count]);
+    }
+    
     lock_destroy(balloon_lock);
     cv_destroy(escape_cv);
     cv_destroy(main_program_cv);
