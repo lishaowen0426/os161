@@ -351,7 +351,7 @@ airballoon(int nargs, char **args)
 	    //rope is still attached
 	    map.rmap_status[count] = 1;
 	    //rope i is connected to stake i
-        map.rmap_stake_num[count] = count;
+	    map.rmap_stake_num[count] = count;
 	}
 	
 	// fork threads
@@ -383,8 +383,8 @@ panic:
 done:
     // wait until notified
     lock_acquire(balloon_lock);
-	cv_wait(main_program_cv, balloon_lock);
-	lock_release(balloon_lock);
+    cv_wait(main_program_cv, balloon_lock);
+    lock_release(balloon_lock);
     
     // all threads done, destroy all locks and cvs
     for(count = 0; count < NROPES; count++){
@@ -398,5 +398,5 @@ done:
     // main thread exits
     kprintf("Main thread done\n");
     
-	return 0;
+    return 0;
 }
