@@ -21,14 +21,14 @@ static int ropes_left = NROPES;
 typedef struct rope_map{
     // The current status of all ropes, 1 if still attached, 0 otherwise. 
     // e.g. rmap_status[3] == true means that the third rope is still attached.
-    bool rmap_status[NROPES];
+    volatile bool rmap_status[NROPES];
     
     // Record the mapping of all ropes to stakes such that
     // rmap_stake_num[n] = k means rope #n is connected to stake #k.
     // Ropes and stakes don't need to have a 1:1 ratio.
     // e.g. rmap_stake_num[3] == 7 && rmap_stake_num[5] == 7 means that both the 
     // 3rd rope and the 5th rope are connected to the 7th stake
-    int rmap_stake_num[NROPES];
+    volatile int rmap_stake_num[NROPES];
     
 } balloon_rope_map;
 
@@ -101,6 +101,43 @@ static struct cv* main_program_cv;
  * map.rmap_stake_num[i] = k (0 <= k <= NROPES);
  * 0 <= ropes_left <= NROPES;
  * None of the structures or entries in the arrays are null.
+ *
+ *
+ * -------------------------------------------------------------------------------
+ * (Ignore this part if the design is considered sufficient for this lab)
+ *
+ * Note on the Marigold & FlowerKiller thread implementation:
+ * Since Marigold & FlowerKiller needs to iterate through the loop for the rope 
+ * number, they need to "do more work" to complete one operation compare to the
+ * Dandelion thread. It is possible that Dandelion completes more work, especially
+ * towards the end of the escaping process (Dandelion will cut rope consecutively).
+ * Given enough rounds of testing, it will show that threads does complete work
+ * interchangably. And Marigold can still cut rope correctly after it is switched 
+ * to another stake. 
+ * This design is memory sufficient that it only needs to allocate memory to store
+ * one boolean array and one number array. It doesn't need to dynamically allocate
+ * space for the switched stake or maintain a 2d square boolean array of size NROPES to 
+ * make sure that the relationship between every rope and stake is marked. It only
+ * needs lock on every rope; doesn't need extra lock on every stake. There is no 
+ * busy-wait or coarse lock on a large critical section. The solution is simple 
+ * enough to prevent race condition or deadlock. The performance seems OK (around
+ * 2 seconds). However, the "unbalanced workload" as metioned above is a problem.
+ * I believe that this is a fair trade-off for the memory conservation since
+ * we are operating on a very limited memory space.
+ * 
+ * The specifications seem odd that Marigold and FlowerKiller can't select "random 
+ * rope" instead of "random stake". Even though they are standing on the ground, they
+ * still need to grab on a rope to cut it or move it to another stake. They don't 
+ * have to "know the rope number". They can just grab one rope by random.
+ * I completed an implementation that both Marigold and FlowerKiller select random
+ * rope. The work load is balanced across all three threads, so it seems like that
+ * it is much more unlikely to print consecutive outputs from one thread. I don't 
+ * know if selecting random rope implementation is better than this one.
+ *
+ * Check commit 1a9d18f for "select random rope" implementation.
+ * 
+ * Thank you so much for reading thus far. It means a lot to me. Have a nice day :)
+ *-------------------------------------------------------------------------------- 
  */ 
 
 static
@@ -180,42 +217,55 @@ marigold(void *p, unsigned long arg)
 	// Implement this function
 	// exit when all ropes are cut
 	while(ropes_left != 0){
-	    // get a random rope and its corresponding stake number
-	    int rand_rope = random() % NROPES;
-	    lock_acquire(rope_status_lock[rand_rope]);
-	    int rand_stake = map.rmap_stake_num[rand_rope];
+	    //lock_acquire(rope_num_lock);
+	    // get a random stake
+	    int rand_stake = random() % NROPES;
 	    
-	    // check if the rope was cut already
-	    while(map.rmap_status[rand_rope] == 0){
-	        lock_release(rope_status_lock[rand_rope]);
-	        
-	        // the rope was cut already, get a new random rope
-	        rand_rope = random() % NROPES;
-	        lock_acquire(rope_status_lock[rand_rope]);
-	        rand_stake = map.rmap_stake_num[rand_rope];
-	        
-	        //check if exit condition is met
-	        if(ropes_left == 0){
-	            lock_release(rope_status_lock[rand_rope]);
-	            goto marigold_done;
-	        }
+	    // look for the corresponding rope number
+	    int index = 0;
+	    int rand_rope = 0;
+	    
+	    // check if exit condition is met
+	    if(ropes_left == 0){
+	        goto marigold_done;
 	    }
+	        
+	    for(index = 0; index < NROPES; index++){
+	        // lock on the current rope
+	        lock_acquire(rope_status_lock[index]);
+	        
+	        // check if the rope is attached to the stake and if it is free
+	        if(map.rmap_stake_num[index] == rand_stake && map.rmap_status[index] == 1){
+	            // this is the rope that we are looking for, mark this rope
+	            rand_rope = index;
+	                    
+	            // the rope was not cut, now cut it
+	            map.rmap_status[rand_rope] = 0;
 	    
-	    // the rope was not cut, now cut it
-	    map.rmap_status[rand_rope] = 0;
+	            // change the total number of ropes left
+	            lock_acquire(rope_num_lock);
+	            ropes_left--;
 	    
-	    // change the total number of ropes left
-	    lock_acquire(rope_num_lock);
-	    ropes_left--;
+	            kprintf("Marigold severed rope %d from stake %d\n", rand_rope, rand_stake);
+	            lock_release(rope_num_lock);
 	    
-	    kprintf("Marigold severed rope %d from stake %d\n", rand_rope, rand_stake);
-	    lock_release(rope_num_lock);
+                lock_release(rope_status_lock[rand_rope]);
 	    
-	    lock_release(rope_status_lock[rand_rope]);
-	    
-	    // give control to another thread
-	    thread_yield();
-	
+                // give control to another thread
+	            thread_yield();
+	                    
+	            break;
+	                    
+	        }else{
+	            // this is not the rope that we are looking for, keep looking
+	            lock_release(rope_status_lock[index]);
+	        }
+	   
+        }
+	        
+	    //  choose a new stake for the next iteration 
+	    rand_stake = random() % NROPES;
+
 	}
 
 // Marigold thread exit	
@@ -238,51 +288,56 @@ flowerkiller(void *p, unsigned long arg)
 	// exit when all ropes are cut
 	while(ropes_left != 0){
 	
-	    // get a random rope and a random stake
-	    int rand_rope = random() % NROPES;
+	    // get a random stake to move the rope from
+	    int present_stake = random() % NROPES;
+	    
+	    // get a random stake to move the rope to
 	    int rand_stake = random() % NROPES;
 	    
-	    // get the present stake that the rope is attached to
-	    lock_acquire(rope_status_lock[rand_rope]);
-	    int present_stake = map.rmap_stake_num[rand_rope];
-	    
-	    // make sure that the present stake is not the new random stake
+	    // make sure they are not the same stake
 	    while(rand_stake == present_stake){
-	        rand_stake = random () % NROPES;
-	    }
-	    
-	    // check if the rope was cut already
-	    while(map.rmap_status[rand_rope] == 0){
-	        lock_release(rope_status_lock[rand_rope]);
-	        
-	        // get a new random rope and a random stake
-	        rand_rope = random() % NROPES;
 	        rand_stake = random() % NROPES;
-	        
-	        lock_acquire(rope_status_lock[rand_rope]);
-	        present_stake = map.rmap_stake_num[rand_rope];
-	        
-	        while(rand_stake == present_stake){
-	            rand_stake = random () % NROPES;
-	        }
-	        
-	        // check if exit condition is met
-	        if(ropes_left == 0){
-	            lock_release(rope_status_lock[rand_rope]);
-	            goto flowerkiller_done;
-	        }
 	    }
+	    
+	    // search for a rope that is on this stake
+	    int rand_rope = 0;
+	    int index = 0;
+	    
+	    for(index = 0; index < NROPES; index++){
+	        // grab the lock on this rope
+	        lock_acquire(rope_status_lock[index]);
+	        
+	        // check if this rope is attached to the chosen stake and if it is uncut
+	        if(map.rmap_stake_num[index] == present_stake && map.rmap_status[index] == 1){
+             
+                // this is the rope that we are looking for, mark it
+	            rand_rope = index;
+	            
+	            // now switch it to the new stake
+	            map.rmap_stake_num[rand_rope] = rand_stake;
 	
-	    // the rope was not cut, now switch it to the new stake
-	    map.rmap_stake_num[rand_rope] = rand_stake;
-	
-	    kprintf("Lord FlowerKiller switched rope %d from stake %d to stake %d\n", rand_rope, present_stake, rand_stake);
+        	    kprintf("Lord FlowerKiller switched rope %d from stake %d to stake %d\n", rand_rope, present_stake, rand_stake);
 	    
-	    lock_release(rope_status_lock[rand_rope]); 
+	            lock_release(rope_status_lock[rand_rope]); 
 	    
-	    // give control to another thread
-	    thread_yield();   
-	    
+	            // give control to another thread
+	            thread_yield();  
+	            break;
+	            
+	        }else{
+	            // the rope is not what we are looking for, keep searching
+	            lock_release(rope_status_lock[index]);
+	        }
+        }
+	        
+	    // check if exit condition is met
+	    if(ropes_left == 0){
+	        goto flowerkiller_done;
+	    }
+	        
+	   // choose a new stake for the next iteration     
+	    rand_stake = random() % NROPES;
+	        
 	}
 	
 // FlowerKiller exit	
