@@ -248,10 +248,10 @@ marigold(void *p, unsigned long arg)
 	    
 	            kprintf("Marigold severed rope %d from stake %d\n", rand_rope, rand_stake);
 	            lock_release(rope_num_lock);
-	    
-                lock_release(rope_status_lock[rand_rope]);
-	    
-                // give control to another thread
+	            
+	            lock_release(rope_status_lock[rand_rope]);
+	            
+	            // give control to another thread
 	            thread_yield();
 	                    
 	            break;
@@ -335,7 +335,7 @@ flowerkiller(void *p, unsigned long arg)
 	        goto flowerkiller_done;
 	    }
 	        
-	   // choose a new stake for the next iteration     
+	    // choose a new stake for the next iteration     
 	    rand_stake = random() % NROPES;
 	        
 	}
