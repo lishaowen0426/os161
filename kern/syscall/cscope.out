@@ -1,0 +1,2614 @@
+cscope 15 $HOME/os161/src/kern/syscall               0000011517
+	@loadelf.c
+
+53 
+	~<ty≥s.h
+>
+
+54 
+	~<kîn/î∫o.h
+>
+
+55 
+	~<lib.h
+>
+
+56 
+	~<uio.h
+>
+
+57 
+	~<¥oc.h
+>
+
+58 
+	~<cuºít.h
+>
+
+59 
+	~<addr•a˚.h
+>
+
+60 
+	~<vnode.h
+>
+
+61 
+	~<ñf.h
+>
+
+79 
+	$lﬂd_£gmít
+(
+addr•a˚
+ *
+as
+, 
+vnode
+ *
+v
+,
+
+80 
+off_t
+ 
+off£t
+, 
+vaddr_t
+ 
+vaddr
+,
+
+81 
+size_t
+ 
+memsize
+, size_à
+fûesize
+,
+
+82 
+is_execuèbÀ
+)
+
+84 
+iovec
+ 
+iov
+;
+
+85 
+uio
+ 
+u
+;
+
+86 
+ªsu…
+;
+
+88 i‡(
+fûesize
+ > 
+memsize
+) {
+
+89 
+	`k¥ötf
+("ELF: warning: segment filesize > segment memsize\n");
+
+90 
+fûesize
+ = 
+memsize
+;
+
+93 
+	`DEBUG
+(
+DB_EXEC
+, "ELF: Loading %lu bytesÅo 0x%lx\n",
+
+94 (Ë
+fûesize
+, (Ë
+vaddr
+);
+
+96 
+iov
+.
+iov_uba£
+ = (
+u£Ωå_t
+)
+vaddr
+;
+
+97 
+iov
+.
+iov_Àn
+ = 
+memsize
+;
+
+98 
+u
+.
+uio_iov
+ = &
+iov
+;
+
+99 
+u
+.
+uio_iov˙t
+ = 1;
+
+100 
+u
+.
+uio_ªsid
+ = 
+fûesize
+;
+
+101 
+u
+.
+uio_off£t
+ = 
+off£t
+;
+
+102 
+u
+.
+uio_£gÊg
+ = 
+is_execuèbÀ
+ ? 
+UIO_USERISPACE
+ : 
+UIO_USERSPACE
+;
+
+103 
+u
+.
+uio_rw
+ = 
+UIO_READ
+;
+
+104 
+u
+.
+uio_•a˚
+ = 
+as
+;
+
+106 
+ªsu…
+ = 
+	`VOP_READ
+(
+v
+, &
+u
+);
+
+107 i‡(
+ªsu…
+) {
+
+108  
+ªsu…
+;
+
+111 i‡(
+u
+.
+uio_ªsid
+ != 0) {
+
+113 
+	`k¥ötf
+("ELF: shortÑead on segment - fileÅruncated?\n");
+
+114  
+ENOEXEC
+;
+
+133 
+size_t
+ 
+fûœmt
+;
+
+135 
+fûœmt
+ = 
+memsize
+ - 
+fûesize
+;
+
+136 i‡(
+fûœmt
+ > 0) {
+
+137 
+	`DEBUG
+(
+DB_EXEC
+, "ELF: Zero-filling %lu more bytes\n",
+
+138 (Ë
+fûœmt
+);
+
+139 
+u
+.
+uio_ªsid
+ +
+fûœmt
+;
+
+140 
+ªsu…
+ = 
+	`uiomovezîos
+(
+fûœmt
+, &
+u
+);
+
+145  
+ªsu…
+;
+
+146 
+	}
+}
+
+154 
+	$lﬂd_ñf
+(
+vnode
+ *
+v
+, 
+vaddr_t
+ *
+íåypoöt
+)
+
+156 
+Elf_Ehdr
+ 
+eh
+;
+
+157 
+Elf_Phdr
+ 
+ph
+;
+
+158 
+ªsu…
+, 
+i
+;
+
+159 
+iovec
+ 
+iov
+;
+
+160 
+uio
+ 
+ku
+;
+
+161 
+addr•a˚
+ *
+as
+;
+
+163 
+as
+ = 
+	`¥oc_gëas
+();
+
+169 
+	`uio_köô
+(&
+iov
+, &
+ku
+, &
+eh
+, ”h), 0, 
+UIO_READ
+);
+
+170 
+ªsu…
+ = 
+	`VOP_READ
+(
+v
+, &
+ku
+);
+
+171 i‡(
+ªsu…
+) {
+
+172  
+ªsu…
+;
+
+175 i‡(
+ku
+.
+uio_ªsid
+ != 0) {
+
+177 
+	`k¥ötf
+("ELF: shortÑead on header - fileÅruncated?\n");
+
+178  
+ENOEXEC
+;
+
+192 i‡(
+eh
+.
+e_idít
+[
+EI_MAG0
+] !
+ELFMAG0
+ ||
+
+193 
+eh
+.
+e_idít
+[
+EI_MAG1
+] !
+ELFMAG1
+ ||
+
+194 
+eh
+.
+e_idít
+[
+EI_MAG2
+] !
+ELFMAG2
+ ||
+
+195 
+eh
+.
+e_idít
+[
+EI_MAG3
+] !
+ELFMAG3
+ ||
+
+196 
+eh
+.
+e_idít
+[
+EI_CLASS
+] !
+ELFCLASS32
+ ||
+
+197 
+eh
+.
+e_idít
+[
+EI_DATA
+] !
+ELFDATA2MSB
+ ||
+
+198 
+eh
+.
+e_idít
+[
+EI_VERSION
+] !
+EV_CURRENT
+ ||
+
+199 
+eh
+.
+e_vîsi⁄
+ !
+EV_CURRENT
+ ||
+
+200 
+eh
+.
+e_ty≥
+!=
+ET_EXEC
+ ||
+
+201 
+eh
+.
+e_machöe
+!=
+EM_MACHINE
+) {
+
+202  
+ENOEXEC
+;
+
+220 
+i
+=0; i<
+eh
+.
+e_phnum
+; i++) {
+
+221 
+off_t
+ 
+off£t
+ = 
+eh
+.
+e_phoff
+ + 
+i
+*eh.
+e_phítsize
+;
+
+222 
+	`uio_köô
+(&
+iov
+, &
+ku
+, &
+ph
+, ’h), 
+off£t
+, 
+UIO_READ
+);
+
+224 
+ªsu…
+ = 
+	`VOP_READ
+(
+v
+, &
+ku
+);
+
+225 i‡(
+ªsu…
+) {
+
+226  
+ªsu…
+;
+
+229 i‡(
+ku
+.
+uio_ªsid
+ != 0) {
+
+231 
+	`k¥ötf
+("ELF: shortÑead onÖhdr - fileÅruncated?\n");
+
+232  
+ENOEXEC
+;
+
+235 
+ph
+.
+p_ty≥
+) {
+
+236 
+PT_NULL
+: ;
+
+237 
+PT_PHDR
+: ;
+
+238 
+PT_MIPS_REGINFO
+: ;
+
+239 
+PT_LOAD
+: ;
+
+241 
+	`k¥ötf
+("loadelf: unknown segmentÅype %d\n",
+
+242 
+ph
+.
+p_ty≥
+);
+
+243  
+ENOEXEC
+;
+
+246 
+ªsu…
+ = 
+	`as_deföe_ªgi⁄
+(
+as
+,
+
+247 
+ph
+.
+p_vaddr
+,Öh.
+p_memsz
+,
+
+248 
+ph
+.
+p_Êags
+ & 
+PF_R
+,
+
+249 
+ph
+.
+p_Êags
+ & 
+PF_W
+,
+
+250 
+ph
+.
+p_Êags
+ & 
+PF_X
+);
+
+251 i‡(
+ªsu…
+) {
+
+252  
+ªsu…
+;
+
+256 
+ªsu…
+ = 
+	`as_¥ï¨e_lﬂd
+(
+as
+);
+
+257 i‡(
+ªsu…
+) {
+
+258  
+ªsu…
+;
+
+265 
+i
+=0; i<
+eh
+.
+e_phnum
+; i++) {
+
+266 
+off_t
+ 
+off£t
+ = 
+eh
+.
+e_phoff
+ + 
+i
+*eh.
+e_phítsize
+;
+
+267 
+	`uio_köô
+(&
+iov
+, &
+ku
+, &
+ph
+, ’h), 
+off£t
+, 
+UIO_READ
+);
+
+269 
+ªsu…
+ = 
+	`VOP_READ
+(
+v
+, &
+ku
+);
+
+270 i‡(
+ªsu…
+) {
+
+271  
+ªsu…
+;
+
+274 i‡(
+ku
+.
+uio_ªsid
+ != 0) {
+
+276 
+	`k¥ötf
+("ELF: shortÑead onÖhdr - fileÅruncated?\n");
+
+277  
+ENOEXEC
+;
+
+280 
+ph
+.
+p_ty≥
+) {
+
+281 
+PT_NULL
+: ;
+
+282 
+PT_PHDR
+: ;
+
+283 
+PT_MIPS_REGINFO
+: ;
+
+284 
+PT_LOAD
+: ;
+
+286 
+	`k¥ötf
+("loadelf: unknown segmentÅype %d\n",
+
+287 
+ph
+.
+p_ty≥
+);
+
+288  
+ENOEXEC
+;
+
+291 
+ªsu…
+ = 
+	`lﬂd_£gmít
+(
+as
+, 
+v
+, 
+ph
+.
+p_off£t
+,Öh.
+p_vaddr
+,
+
+292 
+ph
+.
+p_memsz
+,Öh.
+p_fûesz
+,
+
+293 
+ph
+.
+p_Êags
+ & 
+PF_X
+);
+
+294 i‡(
+ªsu…
+) {
+
+295  
+ªsu…
+;
+
+299 
+ªsu…
+ = 
+	`as_com∂ëe_lﬂd
+(
+as
+);
+
+300 i‡(
+ªsu…
+) {
+
+301  
+ªsu…
+;
+
+304 *
+íåypoöt
+ = 
+eh
+.
+e_íåy
+;
+
+307 
+	}
+}
+
+	@runprogram.c
+
+36 
+	~<ty≥s.h
+>
+
+37 
+	~<kîn/î∫o.h
+>
+
+38 
+	~<kîn/f˙é.h
+>
+
+39 
+	~<lib.h
+>
+
+40 
+	~<¥oc.h
+>
+
+41 
+	~<cuºít.h
+>
+
+42 
+	~<addr•a˚.h
+>
+
+43 
+	~<vm.h
+>
+
+44 
+	~<vfs.h
+>
+
+45 
+	~<sysˇŒ.h
+>
+
+46 
+	~<ã°.h
+>
+
+55 
+	$ru≈rogøm
+(*
+¥og«me
+)
+
+57 
+addr•a˚
+ *
+as
+;
+
+58 
+vnode
+ *
+v
+;
+
+59 
+vaddr_t
+ 
+íåypoöt
+, 
+°ack±r
+;
+
+60 
+ªsu…
+;
+
+63 
+ªsu…
+ = 
+	`vfs_›í
+(
+¥og«me
+, 
+O_RDONLY
+, 0, &
+v
+);
+
+64 i‡(
+ªsu…
+) {
+
+65  
+ªsu…
+;
+
+69 
+	`KASSERT
+(
+	`¥oc_gëas
+(Ë=
+NULL
+);
+
+72 
+as
+ = 
+	`as_¸óã
+();
+
+73 i‡(
+as
+ =
+NULL
+) {
+
+74 
+	`vfs_˛o£
+(
+v
+);
+
+75  
+ENOMEM
+;
+
+79 
+	`¥oc_£ès
+(
+as
+);
+
+80 
+	`as_a˘iv©e
+();
+
+83 
+ªsu…
+ = 
+	`lﬂd_ñf
+(
+v
+, &
+íåypoöt
+);
+
+84 i‡(
+ªsu…
+) {
+
+86 
+	`vfs_˛o£
+(
+v
+);
+
+87  
+ªsu…
+;
+
+91 
+	`vfs_˛o£
+(
+v
+);
+
+94 
+ªsu…
+ = 
+	`as_deföe_°ack
+(
+as
+, &
+°ack±r
+);
+
+95 i‡(
+ªsu…
+) {
+
+97  
+ªsu…
+;
+
+101 
+	`íãr_√w_¥o˚ss
+(0 , 
+NULL
+ ,
+
+102 
+NULL
+ ,
+
+103 
+°ack±r
+, 
+íåypoöt
+);
+
+106 
+	`∑nic
+("enter_new_processÑeturned\n");
+
+107  
+EINVAL
+;
+
+108 
+	}
+}
+
+	@sys_close.c
+
+1 
+	~<ty≥s.h
+>
+
+2 
+	~<sysˇŒ.h
+>
+
+3 
+	~<cuºít.h
+>
+
+4 
+	~<limôs.h
+>
+
+5 
+	~<vnode.h
+>
+
+6 
+	~<vfs.h
+>
+
+7 
+	~<lib.h
+>
+
+8 
+	~<fûëabÀ.h
+>
+
+9 
+	~<¥oc.h
+>
+
+10 
+	~<synch.h
+>
+
+11 
+	~<kîn/î∫o.h
+>
+
+13 
+	$sys_˛o£
+ (
+fd
+){
+
+14 
+	`lock_acquúe
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+15 
+ödex
+=-1;
+
+16 
+fd_íåy
+* 
+„
+=
+	`gë
+(
+cuΩroc
+->
+fd_¨øy
+,
+fd
+,&
+ödex
+);
+
+17 if(
+„
+==
+NULL
+){
+
+18 
+	`lock_ªÀa£
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+19  
+EBADF
+;
+
+21 
+	`KASSERT
+(
+ödex
+!=-1);
+
+22 
+fûe
+* fûe=
+„
+->
+f
+;
+
+23 
+vnode
+* 
+vn
+=
+fûe
+->vn;
+
+24 
+lock
+* 
+l
+=
+fûe
+->l;
+
+27 
+	`lock_acquúe
+(
+l
+);
+
+28 
+	`KASSERT
+(
+fûe
+->
+ªfcou¡
+>=1);
+
+30 --(
+fûe
+->
+ªfcou¡
+);
+
+32 if(
+fûe
+->
+ªfcou¡
+==0){
+
+33 
+	`VOP_DECREF
+(
+vn
+);
+
+34 
+fûe
+->
+vÆid
+=0;
+
+35 
+fûe
+->
+vn
+=
+NULL
+;
+
+36 
+	`lock_ªÀa£
+(
+l
+);
+
+37 
+	`lock_de°roy
+(
+l
+);
+
+39 
+„
+->
+f
+=
+NULL
+;
+
+40 
+	`¨øy_ªmove
+(
+cuΩroc
+->
+fd_¨øy
+,
+ödex
+);
+
+41 
+	`k‰ì
+(
+„
+);
+
+42 
+	`lock_ªÀa£
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+47 
+„
+->
+f
+=
+NULL
+;
+
+48 
+	`¨øy_ªmove
+(
+cuΩroc
+->
+fd_¨øy
+,
+ödex
+);
+
+49 
+	`k‰ì
+(
+„
+);
+
+50 
+	`lock_ªÀa£
+(
+l
+);
+
+51 
+	`lock_ªÀa£
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+57 
+	}
+}
+
+	@sys_dup2.c
+
+1 
+	~<ty≥s.h
+>
+
+2 
+	~<sysˇŒ.h
+>
+
+3 
+	~<lib.h
+>
+
+4 
+	~<fûëabÀ.h
+>
+
+5 
+	~<cuºít.h
+>
+
+6 
+	~<¥oc.h
+>
+
+7 
+	~<kîn/î∫o.h
+>
+
+8 
+	~<¨øy.h
+>
+
+9 
+	~<limôs.h
+>
+
+10 
+	$sys_dup2
+(
+ﬁdfd
+, 
+√wfd
+,
+öt32_t
+* 
+ªtvÆ
+){
+
+11 
+	`lock_acquúe
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+12 
+fd_íåy
+* 
+„
+=
+	`gë
+(
+cuΩroc
+->
+fd_¨øy
+,
+ﬁdfd
+,
+NULL
+);
+
+13 if(
+„
+==
+NULL
+||
+√wfd
+<0){
+
+14 
+	`lock_ªÀa£
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+15  
+EBADF
+;
+
+18 if(
+ﬁdfd
+==
+√wfd
+){
+
+19 *
+ªtvÆ
+=
+√wfd
+;
+
+20 
+	`lock_ªÀa£
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+24 if(
+	`gë
+(
+cuΩroc
+->
+fd_¨øy
+,
+√wfd
+,
+NULL
+)!=NULL){
+
+25 
+	`sys_˛o£
+(
+√wfd
+);
+
+28 if(
+	`¨øy_num
+(
+cuΩroc
+->
+fd_¨øy
+)>=
+OPEN_MAX
+){
+
+29 
+	`lock_ªÀa£
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+30  
+EMFILE
+;;
+
+33 
+fd_íåy
+* 
+√w_fdíåy
+=
+	`kmÆloc
+((fd_entry));
+
+34 if(
+√w_fdíåy
+==
+NULL
+Ë 
+ENFILE
+;
+
+36 
+√w_fdíåy
+->
+fd
+=
+√wfd
+;
+
+37 
+√w_fdíåy
+->
+f
+=
+„
+->f;
+
+38 ++((
+„
+->
+f
+)->
+ªfcou¡
+);
+
+39 
+	`¨øy_add
+(
+cuΩroc
+->
+fd_¨øy
+,
+√w_fdíåy
+,
+NULL
+);
+
+40 *
+ªtvÆ
+=
+√wfd
+;
+
+41 
+	`lock_ªÀa£
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+44 
+	}
+}
+
+	@sys_lseek.c
+
+1 
+	~<ty≥s.h
+>
+
+2 
+	~<sysˇŒ.h
+>
+
+3 
+	~<cuºít.h
+>
+
+4 
+	~<fûëabÀ.h
+>
+
+5 
+	~<¥oc.h
+>
+
+6 
+	~<¨øy.h
+>
+
+7 
+	~<kîn/£ek.h
+>
+
+8 
+	~<kîn/°©.h
+>
+
+9 
+	~<kîn/î∫o.h
+>
+
+11 
+	$sys_l£ek
+(
+fd
+, 
+off_t
+ 
+pos
+, 
+whí˚
+,off_t* 
+ªtvÆ
+){
+
+12 
+fd_íåy
+* 
+„
+=
+	`gë
+(
+cuΩroc
+->
+fd_¨øy
+,
+fd
+,
+NULL
+);
+
+14 if(
+„
+==
+NULL
+Ë 
+EBADF
+;
+
+16 
+fûe
+* fûe=
+„
+->
+f
+;
+
+17 
+vnode
+* 
+vn
+=
+fûe
+->vn;
+
+18 
+lock
+* 
+l
+=
+fûe
+->l;
+
+19 
+off_t
+ 
+√woff£t
+;
+
+21 
+	`lock_acquúe
+(
+l
+);
+
+23 if(
+whí˚
+==
+SEEK_SET
+){
+
+24 
+√woff£t
+=
+pos
+;
+
+26 if(
+whí˚
+==
+SEEK_CUR
+){
+
+27 
+√woff£t
+=
+fûe
+->
+off£t
++
+pos
+;
+
+29 i‡(
+whí˚
+==
+SEEK_END
+){
+
+30 
+°©
+* 
+s
+=
+	`kmÆloc
+((stat));
+
+31 
+	`KASSERT
+(
+s
+!=
+NULL
+);
+
+32 
+	`VOP_STAT
+(
+vn
+,
+s
+);
+
+33 
+√woff£t
+=
+s
+->
+°_size
++
+pos
+;
+
+34 
+	`k‰ì
+(
+s
+);
+
+37 
+	`lock_ªÀa£
+(
+l
+);
+
+38  
+EINVAL
+;
+
+41 if(
+√woff£t
+<0){
+
+42 
+	`lock_ªÀa£
+(
+l
+);
+
+43  
+EINVAL
+;
+
+46 
+fûe
+->
+off£t
+=
+√woff£t
+;
+
+47 *
+ªtvÆ
+=
+√woff£t
+;
+
+48 
+	`lock_ªÀa£
+(
+l
+);
+
+50 
+	}
+}
+
+	@sys_open.c
+
+1 
+	~<ty≥s.h
+>
+
+2 
+	~<sysˇŒ.h
+>
+
+3 
+	~<cuºít.h
+>
+
+4 
+	~<limôs.h
+>
+
+5 
+	~<vnode.h
+>
+
+6 
+	~<vfs.h
+>
+
+7 
+	~<lib.h
+>
+
+8 
+	~<fûëabÀ.h
+>
+
+9 
+	~<¥oc.h
+>
+
+10 
+	~<synch.h
+>
+
+11 
+	~<kîn/î∫o.h
+>
+
+12 
+	~<¨øy.h
+>
+
+13 
+	~<vnode.h
+>
+
+15 
+	$sys_›í
+ (c⁄° *
+fûíame
+, 
+Êags
+, 
+mode_t
+ 
+mode
+,
+öt32_t
+* 
+ªtVÆ
+){
+
+17 
+	`lock_acquúe
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+18 if(
+	`¨øy_num
+(
+cuΩroc
+->
+fd_¨øy
+)>=
+OPEN_MAX
+){
+
+19 
+	`lock_ªÀa£
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+20  
+EMFILE
+;
+
+22 
+fd
+=0;
+
+23 
+	`gë
+(
+cuΩroc
+->
+fd_¨øy
+,
+fd
+,
+NULL
+)!=NULL) ++fd;
+
+25 
+vnode
+* 
+vn
+;
+
+26 
+fd_íåy
+* 
+„
+;
+
+27 
+fûe
+* file;
+
+28 
+îr
+;
+
+29 * 
+«me
+=
+	`k°rdup
+(
+fûíame
+);
+
+30 
+îr
+=
+	`vfs_›í
+(
+«me
+,
+Êags
+,
+mode
+,&
+vn
+);
+
+31 if(
+îr
+) {
+
+32 
+	`lock_ªÀa£
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+33  
+îr
+;
+
+36 
+fûe
+=
+	`kmÆloc
+((file));
+
+37 if(
+fûe
+==
+NULL
+){
+
+38 
+	`lock_ªÀa£
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+39  
+ENFILE
+;
+
+41 
+fûe
+->
+ªfcou¡
+=1;
+
+42 
+fûe
+->
+°©us
+=
+Êags
+;
+
+43 
+fûe
+->
+off£t
+=0;
+
+44 
+fûe
+->
+vn
+=vn;
+
+45 
+fûe
+->
+l
+=
+	`lock_¸óã
+("l");
+
+46 
+fûe
+->
+vÆid
+=1;
+
+48 
+„
+=
+	`kmÆloc
+((
+fd_íåy
+));
+
+49 if(
+„
+==
+NULL
+) {
+
+50 
+	`lock_ªÀa£
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+51  
+EMFILE
+;
+
+54 
+„
+->
+fd
+=fd;
+
+55 
+„
+->
+f
+=
+fûe
+;
+
+57 
+	`fûëabÀ_ö£π
+(&
+fûëabÀ
+,
+fûe
+);
+
+58 
+	`¨øy_add
+(
+cuΩroc
+->
+fd_¨øy
+,
+„
+,
+NULL
+);
+
+59 *
+ªtVÆ
+=
+fd
+;
+
+60 
+	`lock_ªÀa£
+(
+cuΩroc
+->
+¨øy_lock
+);
+
+62 
+	}
+}
+
+	@sys_read.c
+
+1 
+	~<ty≥s.h
+>
+
+2 
+	~<sysˇŒ.h
+>
+
+3 
+	~<cuºít.h
+>
+
+4 
+	~<limôs.h
+>
+
+5 
+	~<vnode.h
+>
+
+6 
+	~<vfs.h
+>
+
+7 
+	~<lib.h
+>
+
+8 
+	~<fûëabÀ.h
+>
+
+9 
+	~<¥oc.h
+>
+
+10 
+	~<synch.h
+>
+
+11 
+	~<kîn/î∫o.h
+>
+
+12 
+	~<uio.h
+>
+
+13 
+	~<kîn/iovec.h
+>
+
+14 
+	~<kîn/f˙é.h
+>
+
+15 
+	$sys_ªad
+ (
+fd
+, *
+buf
+, 
+size_t
+ 
+buÊí
+,
+öt32_t
+* 
+ªtVÆ
+){
+
+17 
+fd_íåy
+* 
+„
+=
+	`gë
+(
+cuΩroc
+->
+fd_¨øy
+,
+fd
+,
+NULL
+);
+
+19 if(
+„
+==
+NULL
+Ë 
+EBADF
+;
+
+21 
+fûe
+* fûe=
+„
+->
+f
+;
+
+22 
+vnode
+* 
+vn
+=
+fûe
+->vn;
+
+23 
+Êags
+=
+fûe
+->
+°©us
+;
+
+25 if(
+Êags
+&
+O_WRONLY
+Ë 
+EBADF
+;
+
+27 
+uio
+ 
+ku
+;
+
+28 
+iovec
+ 
+iov
+;
+
+29 
+îr
+;
+
+31 
+	`uio_köô
+(&
+iov
+,&
+ku
+,
+buf
+,
+buÊí
+,
+fûe
+->
+off£t
+,
+UIO_READ
+);
+
+33 
+îr
+=
+	`VOP_READ
+(
+vn
+,&
+ku
+);
+
+35 if(
+îr
+){
+
+36 
+	`∑nic
+("sysÑeadÉrror\n");
+
+37  
+îr
+;
+
+41 
+fûe
+->
+off£t
+=
+ku
+.
+uio_off£t
+;
+
+43 *
+ªtVÆ
+=
+buÊí
+-
+ku
+.
+uio_ªsid
+;
+
+45 
+	}
+}
+
+	@sys_write.c
+
+1 
+	~<ty≥s.h
+>
+
+2 
+	~<sysˇŒ.h
+>
+
+3 
+	~<lib.h
+>
+
+4 
+	~<vnode.h
+>
+
+5 
+	~<uio.h
+>
+
+6 
+	~<kîn/iovec.h
+>
+
+7 
+	~<¨øy.h
+>
+
+8 
+	~<cuºít.h
+>
+
+9 
+	~<fûëabÀ.h
+>
+
+10 
+	~<¥oc.h
+>
+
+11 
+	~<kîn/î∫o.h
+>
+
+12 
+	~<kîn/f˙é.h
+>
+
+13 
+	$sys_wrôe
+ (
+fd
+, c⁄° *
+buf
+, 
+size_t
+ 
+nbyãs
+,
+öt32_t
+* 
+ªtVÆ
+){
+
+14 
+fd_íåy
+* 
+„
+=
+	`gë
+(
+cuΩroc
+->
+fd_¨øy
+,
+fd
+,
+NULL
+);
+
+15 if(
+„
+==
+NULL
+Ë 
+EBADF
+;
+
+17 
+fûe
+* fûe=
+„
+->
+f
+;
+
+19 
+Êags
+=
+fûe
+->
+°©us
+;
+
+20 
+vnode
+* 
+vn
+=
+fûe
+->vn;
+
+21 
+lock
+* 
+l
+=
+fûe
+->l;
+
+23 if(
+Êags
+&
+O_RDONLY
+Ë 
+EBADF
+;
+
+25 
+	`lock_acquúe
+(
+l
+);
+
+27 
+uio
+ uio;
+
+28 
+iovec
+ 
+iov
+;
+
+29 
+îr
+;
+
+30 * 
+c
+ =
+	`k°rdup
+((c⁄° *)
+buf
+);
+
+33 
+	`uio_köô
+(&
+iov
+,&
+uio
+,
+c
+,
+nbyãs
+,
+fûe
+->
+off£t
+,
+UIO_WRITE
+);
+
+34 
+îr
+=
+	`VOP_WRITE
+(
+vn
+,&
+uio
+);
+
+43 if(
+îr
+){
+
+44 
+	`∑nic
+("sys_writeÉrror\n");
+
+45  
+îr
+;
+
+48 
+fûe
+->
+off£t
+=
+uio
+.
+uio_off£t
+;
+
+49 *
+ªtVÆ
+=
+nbyãs
+-
+uio
+.
+uio_ªsid
+;
+
+50 
+	`k‰ì
+(
+c
+);
+
+51 
+	`lock_ªÀa£
+(
+l
+);
+
+53 
+	}
+}
+
+	@time_syscalls.c
+
+30 
+	~<ty≥s.h
+>
+
+31 
+	~<˛ock.h
+>
+
+32 
+	~<c›yöout.h
+>
+
+33 
+	~<sysˇŒ.h
+>
+
+39 
+	$sys___time
+(
+u£Ωå_t
+ 
+u£r_£c⁄ds_±r
+, u£Ωå_à
+u£r_«no£c⁄ds_±r
+)
+
+41 
+time•ec
+ 
+ts
+;
+
+42 
+ªsu…
+;
+
+44 
+	`gëtime
+(&
+ts
+);
+
+46 
+ªsu…
+ = 
+	`c›yout
+(&
+ts
+.
+tv_£c
+, 
+u£r_£c⁄ds_±r
+, (ts.tv_sec));
+
+47 i‡(
+ªsu…
+) {
+
+48  
+ªsu…
+;
+
+51 
+ªsu…
+ = 
+	`c›yout
+(&
+ts
+.
+tv_n£c
+, 
+u£r_«no£c⁄ds_±r
+,
+
+52 (
+ts
+.
+tv_n£c
+));
+
+53 i‡(
+ªsu…
+) {
+
+54  
+ªsu…
+;
+
+58 
+	}
+}
+
+	@
+1
+.
+0
+9
+108
+loadelf.c
+runprogram.c
+sys_close.c
+sys_dup2.c
+sys_lseek.c
+sys_open.c
+sys_read.c
+sys_write.c
+time_syscalls.c

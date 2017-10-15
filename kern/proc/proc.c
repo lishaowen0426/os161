@@ -48,12 +48,17 @@
 #include <current.h>
 #include <addrspace.h>
 #include <vnode.h>
-
+#include <filetable.h>
+#include <array.h>
+#include <limits.h>
+#include <kern/fcntl.h>
+#include <vfs.h>
+#include <syscall.h>
 /*
  * The process for the kernel; this holds all the kernel-only threads.
  */
 struct proc *kproc;
-
+//struct filetable filetable;
 /*
  * Create a proc structure.
  */
@@ -82,6 +87,9 @@ proc_create(const char *name)
 	/* VFS fields */
 	proc->p_cwd = NULL;
 
+	proc->fd_array=array_create();
+	proc->array_lock=lock_create("l");
+	array_preallocate(proc->fd_array,OPEN_MAX);
 	return proc;
 }
 
@@ -218,6 +226,8 @@ proc_create_runprogram(const char *name)
 	}
 	spinlock_release(&curproc->p_lock);
 
+	proc_init(newproc);
+
 	return newproc;
 }
 
@@ -328,4 +338,78 @@ proc_setas(struct addrspace *newas)
 	proc->p_addrspace = newas;
 	spinlock_release(&proc->p_lock);
 	return oldas;
+}
+
+void proc_init(struct proc* proc){
+	struct file* f;
+	struct fd_entry* fe;
+	char* console=NULL;
+	console=kstrdup("con:");
+
+	struct vnode* stdinput;
+	int err;
+	err=vfs_open(console,O_RDONLY,0664,&stdinput);
+	KASSERT(err==0);
+	f=kmalloc(sizeof(struct file));
+	f->refcount=1;
+	f->status=O_RDONLY;
+	f->offset=0;
+	f->vn=stdinput;
+	f->l=lock_create("l");
+	f->valid=1;
+	fe=kmalloc(sizeof(struct fd_entry));
+	fe->fd=0;
+	fe->f=f;
+	filetable_insert(&filetable,f);
+	array_add(proc->fd_array,fe,NULL);
+
+	struct vnode* stdoutput;
+	console=kstrdup("con:");
+	err=vfs_open(console,O_WRONLY,0664,&stdoutput);
+	KASSERT(err==0);
+	f=kmalloc(sizeof(struct file));
+	f->refcount=1;
+	f->status=O_WRONLY;
+	f->offset=0;
+	f->vn=stdoutput;
+	f->l=lock_create("l");
+	f->valid=1;
+	fe=kmalloc(sizeof(struct fd_entry));
+	fe->fd=1;
+	fe->f=f;
+	filetable_insert(&filetable,f);
+	array_add(proc->fd_array,fe,NULL);
+
+	struct vnode* stderr;
+	console=kstrdup("con:");
+	err=vfs_open(console,O_WRONLY,0664,&stderr);
+	KASSERT(err==0);
+	f=kmalloc(sizeof(struct file));
+	f->refcount=1;
+	f->status=O_WRONLY;
+	f->offset=0;
+	f->vn=stderr;
+	f->l=lock_create("l");
+	f->valid=1;
+	fe=kmalloc(sizeof(struct fd_entry));
+	fe->fd=2;
+	fe->f=f;
+	filetable_insert(&filetable,f);
+	array_add(proc->fd_array,fe,NULL);
+
+
+
+}
+
+struct fd_entry* get(struct array* arr, int fd,int* i){
+	if(fd<0) return NULL;
+	struct fd_entry* ret=NULL;
+	for(unsigned index=0;index<array_num(arr);++index){
+		ret=(struct fd_entry*)array_get(arr,index);
+		if(ret->fd==(unsigned)fd&&ret->f->valid) {
+			if(i!=NULL)*i=index;
+			return ret;
+		}
+	}
+	return NULL;
 }

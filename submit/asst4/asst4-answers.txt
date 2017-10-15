@@ -1,0 +1,106 @@
+1. In "~/os161/src/kern/include/elf.h", on line 83 to 86, it is defined such that the ELF 
+magic number from 0th bit to 3rd bit are: 0x7f, E, L, F.
+
+
+2. In "~/os161/src/kern/include/uio.h", on line 68 and 69, UIO_USERISPACE AND UIO_USERSPACE
+are defined. UIO_USERISPACE means what we are loading is an executable; they are code 
+to run in user process. On the other hand, UIO_USERSPACE means what we are loading is 
+data, like files that we are reading. I think we should use UIO_SYSSPACE when we want 
+to write data to any files. Any write operation need to go through kernel, so that all
+thread can see the change.
+
+
+3. The function load_segement() is located in "~/os161/src/kern/syscall/loadelf.c". 
+The memory read actually goes to the heap (starting at address vaddr, max size is memsize). 
+The struct uio doesn’t contain the memory to read. It has a pointer to the struct iovec 
+which contains the address and size of the memory to be read on the shared heap.
+
+
+4. The function runprogram() is located in "~/os161/src/kern/syscall/runprogram.c". In 
+runprogram(), vfs_open() is first called to read the file from disk to a vnode in memory. 
+It increments the reference counter to the file. When we finish reading the file, we 
+need to call vfs_close() to decrement reference counter. Decrementing ref count is done 
+in vnode_decref() in "~/os161/src/kern/vfs/vnode.c", which is called by vfs_close(). If we 
+don't call vfs_close(), we won't know the correct number of threads that are accessing 
+the same file. As we discussed in class, we need to keep track of ref count so that a 
+file can only be deleted when ref count becomes 0. 
+
+
+5. The function mips_usermode(struct trapframe* tf) in "~/os161/src/kern/arch/mips/locore/trap.c"
+forces the processor to switch into usermode. This function is not machine dependent 
+itself. However, what actually makes it happen is the function asm_usermode, which calls 
+exception_return. This function is machine dependent, it directly loads the registers, 
+you have to know how many registers you have, what they are used for etc.
+
+
+6. copyin and copyout are defined in “~/os161/src/kern/vm/copyinout.c”.
+memmove is defined in “~/os161/src/common/libc/string/memmove.c”.
+When we call copyin or copyout, domain crossing happens. So we need to do some extra 
+work to make sure we not pollute the kernel address space. First we need to check the 
+user space address is actually in the user space, it has no overlap with the kernel 
+address space. Secondly, we use setjmp and longjmp to perform recovery when fatal kernel
+memory faults happen: the execution resumes and returns before the call to memcpy thus 
+will not touch the kernel memory space.
+
+
+7. In "~/os161/src/kern/include/types.h", we find the userptr_t is actually a pointer 
+to a struct which only contains one char type member(one byte member). We think we use 
+it since we don’t want users to mix the type with other pointers, for example, if we 
+use char*, users may cast it into other type of pointers, which will cause errors. 
+We just need an address when we use userptr_t, defining it as a struct can make it easier
+to use by the users.
+
+
+8. In "~/os161/src/kern/arch/mips/include/trapeframe.h", line 91, it is defined that the 
+numerical value of the exception code for a MIPS system call is 8.
+
+
+9. Each instruction in MIPS is 32 bits, which is 4 bytes. In syscall(), we use 
+“tf->tfepc+=4” to proceed to the next instruction, so each instruction is 4 bytes.
+
+
+10. The current implementation of kill_curthread() in "~/os161/src/kern/arch/mips/locore/trap.c"
+just prints out the corresponding information such as the sig number, the trap code name, 
+and the associated address when user-level code hits a fatal fault, no matter what type 
+of the fault it is. We might want to handle different types of fault differently, thus 
+we should change this implementation. Moreover, we need to cleanup after the user thread
+when it encounters error, for example, close the opened file, so that the reference 
+counter remains valid.
+
+
+11. When you have more than 4 arguments or the arguments are too big (64bits), these 
+should be stored on the stack. When you pass the parameters to your system call function 
+inside syscall(trapframe* tf), you have to fetch the fifth argument by calling copyin()，
+and the address should start from tf->tf_sp+16. The next argument should be the following 
+element on the stack, with the same offset.
+
+
+12. The SYSCALL macro defines the symbol and corresponding number of different type of 
+system calls, so that all classes can follow the same encoding. The syscall handler 
+can then differentiate the different cases.
+
+
+13. A system call is triggered by the instruction "jal mips_trap" in 
+"~os161/src/kern/arch/mips/locore/exception-mips1.S".
+
+
+14. 32-bit arg0 : tf->tf_a0
+    64bit arg1:  tf->tf_a2 and tf->tf_a3
+    32bit arg2:   tf->tf_sp+16: copyin(tf->tf_sp+16, void*dest, 4)
+
+    When you return the 64bit offset, say you have a pointer pointing to your 64bit 
+	offset:void* ptr, you will do something like tf->tf_v0=ptr; tf->tf_v1=ptr+4; 
+	tf->tf_a3=0;
+
+
+15: open file: vfs_open
+    Read file: VOP_READ
+    Write file:VOP_WRITE
+    Represent file: vnode
+
+16. These two are used for manipulating the reference count of a file. VOP_INCREF 
+increments the reference counter when it is opened by a thread and VOP_DECREF
+decrements the reference counter when it is closed by a thread. They are defined in 
+"~/os161/src/kern/include/vnode.h".
+	
+   

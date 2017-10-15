@@ -140,6 +140,7 @@ test_dup2()
 	/* ensure null termination */
 	readbuf[80] = 0;
 
+
 	/* Compare the second half */
 	if (strcmp(&readbuf[40], writebuf))
 	{
@@ -201,6 +202,7 @@ test_openfile_limits()
 		    "first three are reserved. \n",
 		    (i+1), OPEN_MAX);
 
+
 	/* Let's close one file and open another one, which should succeed. */
 	rv = close(openFDs[0]);
 	if (rv<0)
@@ -223,6 +225,7 @@ test_openfile_limits()
 		if (rv<0)
 			err(1, "%s: close file descriptor %d", file, i);
 	}
+
 }
 
 /* Open two files, write to them, read from them, make sure the
@@ -359,6 +362,7 @@ dir_test()
 int
 main()
 {
+
 	test_openfile_limits();
 	printf("Passed Part 1 of fsyscalltest\n");
 

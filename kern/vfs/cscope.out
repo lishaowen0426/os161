@@ -1,0 +1,6147 @@
+cscope 15 $HOME/os161/src/kern/vfs               0000028674
+	@device.c
+
+36 
+	~<ty≥s.h
+>
+
+37 
+	~<kîn/î∫o.h
+>
+
+38 
+	~<kîn/f˙é.h
+>
+
+39 
+	~<°©.h
+>
+
+40 
+	~<lib.h
+>
+
+41 
+	~<uio.h
+>
+
+42 
+	~<synch.h
+>
+
+43 
+	~<vnode.h
+>
+
+44 
+	~<devi˚.h
+>
+
+53 
+	$dev_óch›í
+(
+vnode
+ *
+v
+, 
+Êags
+)
+
+55 
+devi˚
+ *
+d
+ = 
+v
+->
+vn_d©a
+;
+
+57 i‡(
+Êags
+ & (
+O_CREAT
+ | 
+O_TRUNC
+ | 
+O_EXCL
+ | 
+O_APPEND
+)) {
+
+58  
+EINVAL
+;
+
+61  
+	`DEVOP_EACHOPEN
+(
+d
+, 
+Êags
+);
+
+62 
+	}
+}
+
+70 
+	$dev_ª˛aim
+(
+vnode
+ *
+v
+)
+
+72 ()
+v
+;
+
+75 
+	}
+}
+
+86 
+	$dev_åy£ek
+(
+devi˚
+ *
+d
+, 
+off_t
+ 
+pos
+)
+
+88 i‡(
+d
+->
+d_blocks
+ > 0) {
+
+89 i‡((
+pos
+ % 
+d
+->
+d_blocksize
+)!=0) {
+
+91  
+EINVAL
+;
+
+93 i‡(
+pos
+ / 
+d
+->
+d_blocksize
+ >d->
+d_blocks
+) {
+
+95  
+EINVAL
+;
+
+102 
+	}
+}
+
+109 
+	$dev_ªad
+(
+vnode
+ *
+v
+, 
+uio
+ *uio)
+
+111 
+devi˚
+ *
+d
+ = 
+v
+->
+vn_d©a
+;
+
+112 
+ªsu…
+;
+
+114 
+ªsu…
+ = 
+	`dev_åy£ek
+(
+d
+, 
+uio
+->
+uio_off£t
+);
+
+115 i‡(
+ªsu…
+) {
+
+116  
+ªsu…
+;
+
+119 
+	`KASSERT
+(
+uio
+->
+uio_rw
+ =
+UIO_READ
+);
+
+120  
+	`DEVOP_IO
+(
+d
+, 
+uio
+);
+
+121 
+	}
+}
+
+128 
+	$dev_wrôe
+(
+vnode
+ *
+v
+, 
+uio
+ *uio)
+
+130 
+devi˚
+ *
+d
+ = 
+v
+->
+vn_d©a
+;
+
+131 
+ªsu…
+;
+
+133 
+ªsu…
+ = 
+	`dev_åy£ek
+(
+d
+, 
+uio
+->
+uio_off£t
+);
+
+134 i‡(
+ªsu…
+) {
+
+135  
+ªsu…
+;
+
+138 
+	`KASSERT
+(
+uio
+->
+uio_rw
+ =
+UIO_WRITE
+);
+
+139  
+	`DEVOP_IO
+(
+d
+, 
+uio
+);
+
+140 
+	}
+}
+
+147 
+	$dev_io˘l
+(
+vnode
+ *
+v
+, 
+›
+, 
+u£Ωå_t
+ 
+d©a
+)
+
+149 
+devi˚
+ *
+d
+ = 
+v
+->
+vn_d©a
+;
+
+150  
+	`DEVOP_IOCTL
+(
+d
+, 
+›
+, 
+d©a
+);
+
+151 
+	}
+}
+
+160 
+	$dev_°©
+(
+vnode
+ *
+v
+, 
+°©
+ *
+°©buf
+)
+
+162 
+devi˚
+ *
+d
+ = 
+v
+->
+vn_d©a
+;
+
+163 
+ªsu…
+;
+
+165 
+	`bzîo
+(
+°©buf
+, (
+°©
+));
+
+167 i‡(
+d
+->
+d_blocks
+ > 0) {
+
+168 
+°©buf
+->
+°_size
+ = 
+d
+->
+d_blocks
+ * d->
+d_blocksize
+;
+
+169 
+°©buf
+->
+°_blksize
+ = 
+d
+->
+d_blocksize
+;
+
+172 
+°©buf
+->
+°_size
+ = 0;
+
+175 
+ªsu…
+ = 
+	`VOP_GETTYPE
+(
+v
+, &
+°©buf
+->
+°_mode
+);
+
+176 i‡(
+ªsu…
+) {
+
+177  
+ªsu…
+;
+
+180 
+°©buf
+->
+°_mode
+ |= 0600;
+
+182 
+°©buf
+->
+°_∆ök
+ = 1;
+
+183 
+°©buf
+->
+°_blocks
+ = 
+d
+->
+d_blocks
+;
+
+186 
+°©buf
+->
+°_dev
+ = 0;
+
+189 
+°©buf
+->
+°_rdev
+ = 
+d
+->
+d_devnumbî
+;
+
+192 
+	}
+}
+
+201 
+	$dev_gëty≥
+(
+vnode
+ *
+v
+, 
+mode_t
+ *
+ªt
+)
+
+203 
+devi˚
+ *
+d
+ = 
+v
+->
+vn_d©a
+;
+
+204 i‡(
+d
+->
+d_blocks
+ > 0) {
+
+205 *
+ªt
+ = 
+S_IFBLK
+;
+
+208 *
+ªt
+ = 
+S_IFCHR
+;
+
+211 
+	}
+}
+
+217 
+boﬁ
+
+
+218 
+	$dev_is£ekabÀ
+(
+vnode
+ *
+v
+)
+
+220 
+devi˚
+ *
+d
+ = 
+v
+->
+vn_d©a
+;
+
+222 i‡(
+d
+->
+d_blocks
+ == 0) {
+
+223  
+Ál£
+;
+
+225  
+åue
+;
+
+226 
+	}
+}
+
+233 
+	$nuŒ_fsync
+(
+vnode
+ *
+v
+)
+
+235 ()
+v
+;
+
+237 
+	}
+}
+
+245 
+	$dev_mm≠
+(
+vnode
+ *
+v
+ )
+
+247 ()
+v
+;
+
+248  
+ENOSYS
+;
+
+249 
+	}
+}
+
+256 
+	$dev_åunˇã
+(
+vnode
+ *
+v
+, 
+off_t
+ 
+Àn
+)
+
+258 
+devi˚
+ *
+d
+ = 
+v
+->
+vn_d©a
+;
+
+263 i‡(
+d
+->
+d_blocks
+ > 0 && (
+off_t
+)(d->d_blocks*d->
+d_blocksize
+Ë=
+Àn
+) {
+
+267  
+EINVAL
+;
+
+268 
+	}
+}
+
+278 
+	$dev_«mefûe
+(
+vnode
+ *
+v
+, 
+uio
+ *uio)
+
+286 ()
+v
+;
+
+287 ()
+uio
+;
+
+290 
+	}
+}
+
+306 
+	$dev_lookup
+(
+vnode
+ *
+dú
+,
+
+307 *
+∑th«me
+, 
+vnode
+ **
+ªsu…
+)
+
+314 i‡(
+	`°æí
+(
+∑th«me
+)>0) {
+
+315  
+ENOENT
+;
+
+317 
+	`VOP_INCREF
+(
+dú
+);
+
+318 *
+ªsu…
+ = 
+dú
+;
+
+320 
+	}
+}
+
+325 c⁄° 
+vnode_›s
+ 
+	gdev_vnode_›s
+ = {
+
+326 .
+v›_magic
+ = 
+VOP_MAGIC
+,
+
+328 .
+	gv›_óch›í
+ = 
+dev_óch›í
+,
+
+329 .
+	gv›_ª˛aim
+ = 
+dev_ª˛aim
+,
+
+330 .
+	gv›_ªad
+ = 
+dev_ªad
+,
+
+331 .
+	gv›_ªadlök
+ = 
+v›Áû_uio_övÆ
+,
+
+332 .
+	gv›_gëdúíåy
+ = 
+v›Áû_uio_nŸdú
+,
+
+333 .
+	gv›_wrôe
+ = 
+dev_wrôe
+,
+
+334 .
+	gv›_io˘l
+ = 
+dev_io˘l
+,
+
+335 .
+	gv›_°©
+ = 
+dev_°©
+,
+
+336 .
+	gv›_gëty≥
+ = 
+dev_gëty≥
+,
+
+337 .
+	gv›_is£ekabÀ
+ = 
+dev_is£ekabÀ
+,
+
+338 .
+	gv›_fsync
+ = 
+nuŒ_fsync
+,
+
+339 .
+	gv›_mm≠
+ = 
+dev_mm≠
+,
+
+340 .
+	gv›_åunˇã
+ = 
+dev_åunˇã
+,
+
+341 .
+	gv›_«mefûe
+ = 
+dev_«mefûe
+,
+
+342 .
+	gv›_¸ót
+ = 
+v›Áû_¸ót_nŸdú
+,
+
+343 .
+	gv›_symlök
+ = 
+v›Áû_symlök_nŸdú
+,
+
+344 .
+	gv›_mkdú
+ = 
+v›Áû_mkdú_nŸdú
+,
+
+345 .
+	gv›_lök
+ = 
+v›Áû_lök_nŸdú
+,
+
+346 .
+	gv›_ªmove
+ = 
+v›Áû_°rög_nŸdú
+,
+
+347 .
+	gv›_rmdú
+ = 
+v›Áû_°rög_nŸdú
+,
+
+348 .
+	gv›_ª«me
+ = 
+v›Áû_ª«me_nŸdú
+,
+
+349 .
+	gv›_lookup
+ = 
+dev_lookup
+,
+
+350 .
+	gv›_look∑ª¡
+ = 
+v›Áû_look∑ª¡_nŸdú
+,
+
+356 
+vnode
+ *
+
+357 
+	$dev_¸óã_vnode
+(
+devi˚
+ *
+dev
+)
+
+359 
+ªsu…
+;
+
+360 
+vnode
+ *
+v
+;
+
+362 
+v
+ = 
+	`kmÆloc
+((
+vnode
+));
+
+363 i‡(
+v
+==
+NULL
+) {
+
+364  
+NULL
+;
+
+367 
+ªsu…
+ = 
+	`vnode_öô
+(
+v
+, &
+dev_vnode_›s
+, 
+NULL
+, 
+dev
+);
+
+368 i‡(
+ªsu…
+ != 0) {
+
+369 
+	`∑nic
+("While creating vnode for device: vnode_init: %s\n",
+
+370 
+	`°ªº‹
+(
+ªsu…
+));
+
+373  
+v
+;
+
+374 
+	}
+}
+
+	@devnull.c
+
+34 
+	~<ty≥s.h
+>
+
+35 
+	~<kîn/î∫o.h
+>
+
+36 
+	~<lib.h
+>
+
+37 
+	~<uio.h
+>
+
+38 
+	~<vfs.h
+>
+
+39 
+	~<devi˚.h
+>
+
+44 
+	$nuŒ›í
+(
+devi˚
+ *
+dev
+, 
+›íÊags
+)
+
+46 ()
+dev
+;
+
+47 ()
+›íÊags
+;
+
+50 
+	}
+}
+
+55 
+	$nuŒio
+(
+devi˚
+ *
+dev
+, 
+uio
+ *uio)
+
+66 ()
+dev
+;
+
+68 i‡(
+uio
+->
+uio_rw
+ =
+UIO_WRITE
+) {
+
+69 
+uio
+->
+uio_ªsid
+ = 0;
+
+73 
+	}
+}
+
+78 
+	$nuŒio˘l
+(
+devi˚
+ *
+dev
+, 
+›
+, 
+u£Ωå_t
+ 
+d©a
+)
+
+84 ()
+dev
+;
+
+85 ()
+›
+;
+
+86 ()
+d©a
+;
+
+88  
+EINVAL
+;
+
+89 
+	}
+}
+
+91 c⁄° 
+devi˚_›s
+ 
+	gnuŒ_dev›s
+ = {
+
+92 .
+dev›_óch›í
+ = 
+nuŒ›í
+,
+
+93 .
+	gdev›_io
+ = 
+nuŒio
+,
+
+94 .
+	gdev›_io˘l
+ = 
+nuŒio˘l
+,
+
+101 
+	$devnuŒ_¸óã
+()
+
+103 
+ªsu…
+;
+
+104 
+devi˚
+ *
+dev
+;
+
+106 
+dev
+ = 
+	`kmÆloc
+((*dev));
+
+107 i‡(
+dev
+==
+NULL
+) {
+
+108 
+	`∑nic
+("CouldÇotáddÇull device: out of memory\n");
+
+111 
+dev
+->
+d_›s
+ = &
+nuŒ_dev›s
+;
+
+113 
+dev
+->
+d_blocks
+ = 0;
+
+114 
+dev
+->
+d_blocksize
+ = 1;
+
+116 
+dev
+->
+d_devnumbî
+ = 0;
+
+118 
+dev
+->
+d_d©a
+ = 
+NULL
+;
+
+120 
+ªsu…
+ = 
+	`vfs_adddev
+("nuŒ", 
+dev
+, 0);
+
+121 i‡(
+ªsu…
+) {
+
+122 
+	`∑nic
+("CouldÇŸáddÇuŒ devi˚: %s\n", 
+	`°ªº‹
+(
+ªsu…
+));
+
+124 
+	}
+}
+
+	@vfscwd.c
+
+34 
+	~<ty≥s.h
+>
+
+35 
+	~<kîn/î∫o.h
+>
+
+36 
+	~<°©.h
+>
+
+37 
+	~<lib.h
+>
+
+38 
+	~<uio.h
+>
+
+39 
+	~<¥oc.h
+>
+
+40 
+	~<cuºít.h
+>
+
+41 
+	~<vfs.h
+>
+
+42 
+	~<fs.h
+>
+
+43 
+	~<vnode.h
+>
+
+49 
+	$vfs_gëcurdú
+(
+vnode
+ **
+ªt
+)
+
+51 
+rv
+ = 0;
+
+53 
+	`•ölock_acquúe
+(&
+cuΩroc
+->
+p_lock
+);
+
+54 i‡(
+cuΩroc
+->
+p_cwd
+!=
+NULL
+) {
+
+55 
+	`VOP_INCREF
+(
+cuΩroc
+->
+p_cwd
+);
+
+56 *
+ªt
+ = 
+cuΩroc
+->
+p_cwd
+;
+
+59 
+rv
+ = 
+ENOENT
+;
+
+61 
+	`•ölock_ªÀa£
+(&
+cuΩroc
+->
+p_lock
+);
+
+63  
+rv
+;
+
+64 
+	}
+}
+
+71 
+	$vfs_£tcurdú
+(
+vnode
+ *
+dú
+)
+
+73 
+vnode
+ *
+ﬁd
+;
+
+74 
+mode_t
+ 
+vty≥
+;
+
+75 
+ªsu…
+;
+
+77 
+ªsu…
+ = 
+	`VOP_GETTYPE
+(
+dú
+, &
+vty≥
+);
+
+78 i‡(
+ªsu…
+) {
+
+79  
+ªsu…
+;
+
+81 i‡(
+vty≥
+ !
+S_IFDIR
+) {
+
+82  
+ENOTDIR
+;
+
+85 
+	`VOP_INCREF
+(
+dú
+);
+
+87 
+	`•ölock_acquúe
+(&
+cuΩroc
+->
+p_lock
+);
+
+88 
+ﬁd
+ = 
+cuΩroc
+->
+p_cwd
+;
+
+89 
+cuΩroc
+->
+p_cwd
+ = 
+dú
+;
+
+90 
+	`•ölock_ªÀa£
+(&
+cuΩroc
+->
+p_lock
+);
+
+92 i‡(
+ﬁd
+!=
+NULL
+) {
+
+93 
+	`VOP_DECREF
+(
+ﬁd
+);
+
+97 
+	}
+}
+
+103 
+	$vfs_˛órcurdú
+()
+
+105 
+vnode
+ *
+ﬁd
+;
+
+107 
+	`•ölock_acquúe
+(&
+cuΩroc
+->
+p_lock
+);
+
+108 
+ﬁd
+ = 
+cuΩroc
+->
+p_cwd
+;
+
+109 
+cuΩroc
+->
+p_cwd
+ = 
+NULL
+;
+
+110 
+	`•ölock_ªÀa£
+(&
+cuΩroc
+->
+p_lock
+);
+
+112 i‡(
+ﬁd
+!=
+NULL
+) {
+
+113 
+	`VOP_DECREF
+(
+ﬁd
+);
+
+117 
+	}
+}
+
+124 
+	$vfs_chdú
+(*
+∑th
+)
+
+126 
+vnode
+ *
+vn
+;
+
+127 
+ªsu…
+;
+
+129 
+ªsu…
+ = 
+	`vfs_lookup
+(
+∑th
+, &
+vn
+);
+
+130 i‡(
+ªsu…
+) {
+
+131  
+ªsu…
+;
+
+133 
+ªsu…
+ = 
+	`vfs_£tcurdú
+(
+vn
+);
+
+134 
+	`VOP_DECREF
+(
+vn
+);
+
+135  
+ªsu…
+;
+
+136 
+	}
+}
+
+144 
+	$vfs_gëcwd
+(
+uio
+ *uio)
+
+146 
+vnode
+ *
+cwd
+;
+
+147 
+ªsu…
+;
+
+148 c⁄° *
+«me
+;
+
+149 
+cﬁ⁄
+=':';
+
+151 
+	`KASSERT
+(
+uio
+->
+uio_rw
+==
+UIO_READ
+);
+
+153 
+ªsu…
+ = 
+	`vfs_gëcurdú
+(&
+cwd
+);
+
+154 i‡(
+ªsu…
+) {
+
+155  
+ªsu…
+;
+
+159 
+	`KASSERT
+(
+cwd
+->
+vn_fs
+ !
+NULL
+);
+
+161 
+«me
+ = 
+	`FSOP_GETVOLNAME
+(
+cwd
+->
+vn_fs
+);
+
+162 i‡(
+«me
+==
+NULL
+) {
+
+163 
+	`vfs_biglock_acquúe
+();
+
+164 
+«me
+ = 
+	`vfs_gëdev«me
+(
+cwd
+->
+vn_fs
+);
+
+165 
+	`vfs_biglock_ªÀa£
+();
+
+167 
+	`KASSERT
+(
+«me
+ !
+NULL
+);
+
+169 
+ªsu…
+ = 
+	`uiomove
+((*)
+«me
+, 
+	`°æí
+“ame), 
+uio
+);
+
+170 i‡(
+ªsu…
+) {
+
+171 
+out
+;
+
+173 
+ªsu…
+ = 
+	`uiomove
+(&
+cﬁ⁄
+, 1, 
+uio
+);
+
+174 i‡(
+ªsu…
+) {
+
+175 
+out
+;
+
+178 
+ªsu…
+ = 
+	`VOP_NAMEFILE
+(
+cwd
+, 
+uio
+);
+
+180 
+out
+:
+
+182 
+	`VOP_DECREF
+(
+cwd
+);
+
+183  
+ªsu…
+;
+
+184 
+	}
+}
+
+	@vfsfail.c
+
+30 
+	~<ty≥s.h
+>
+
+31 
+	~<kîn/î∫o.h
+>
+
+32 
+	~<vnode.h
+>
+
+51 
+	$v›Áû_uio_nŸdú
+(
+vnode
+ *
+vn
+, 
+uio
+ *uio)
+
+53 ()
+vn
+;
+
+54 ()
+uio
+;
+
+55  
+ENOTDIR
+;
+
+56 
+	}
+}
+
+59 
+	$v›Áû_uio_isdú
+(
+vnode
+ *
+vn
+, 
+uio
+ *uio)
+
+61 ()
+vn
+;
+
+62 ()
+uio
+;
+
+63  
+EISDIR
+;
+
+64 
+	}
+}
+
+67 
+	$v›Áû_uio_övÆ
+(
+vnode
+ *
+vn
+, 
+uio
+ *uio)
+
+69 ()
+vn
+;
+
+70 ()
+uio
+;
+
+71  
+EINVAL
+;
+
+72 
+	}
+}
+
+75 
+	$v›Áû_uio_nosys
+(
+vnode
+ *
+vn
+, 
+uio
+ *uio)
+
+77 ()
+vn
+;
+
+78 ()
+uio
+;
+
+79  
+ENOSYS
+;
+
+80 
+	}
+}
+
+86 
+	$v›Áû_mm≠_isdú
+(
+vnode
+ *
+vn
+ )
+
+88 ()
+vn
+;
+
+89  
+EISDIR
+;
+
+90 
+	}
+}
+
+93 
+	$v›Áû_mm≠_≥rm
+(
+vnode
+ *
+vn
+ )
+
+95 ()
+vn
+;
+
+96  
+EPERM
+;
+
+97 
+	}
+}
+
+100 
+	$v›Áû_mm≠_nosys
+(
+vnode
+ *
+vn
+ )
+
+102 ()
+vn
+;
+
+103  
+ENOSYS
+;
+
+104 
+	}
+}
+
+110 
+	$v›Áû_åunˇã_isdú
+(
+vnode
+ *
+vn
+, 
+off_t
+ 
+pos
+)
+
+112 ()
+vn
+;
+
+113 ()
+pos
+;
+
+114  
+EISDIR
+;
+
+115 
+	}
+}
+
+121 
+	$v›Áû_¸ót_nŸdú
+(
+vnode
+ *
+vn
+, c⁄° *
+«me
+, 
+boﬁ
+ 
+ex˛
+,
+
+122 
+mode_t
+ 
+mode
+, 
+vnode
+ **
+ªsu…
+)
+
+124 ()
+vn
+;
+
+125 ()
+«me
+;
+
+126 ()
+ex˛
+;
+
+127 ()
+mode
+;
+
+128 ()
+ªsu…
+;
+
+129  
+ENOTDIR
+;
+
+130 
+	}
+}
+
+136 
+	$v›Áû_symlök_nŸdú
+(
+vnode
+ *
+vn
+, c⁄° *
+c⁄ã¡s
+,
+
+137 c⁄° *
+«me
+)
+
+139 ()
+vn
+;
+
+140 ()
+c⁄ã¡s
+;
+
+141 ()
+«me
+;
+
+142  
+ENOTDIR
+;
+
+143 
+	}
+}
+
+146 
+	$v›Áû_symlök_nosys
+(
+vnode
+ *
+vn
+, c⁄° *
+c⁄ã¡s
+,
+
+147 c⁄° *
+«me
+)
+
+149 ()
+vn
+;
+
+150 ()
+c⁄ã¡s
+;
+
+151 ()
+«me
+;
+
+152  
+ENOSYS
+;
+
+153 
+	}
+}
+
+159 
+	$v›Áû_mkdú_nŸdú
+(
+vnode
+ *
+vn
+, c⁄° *
+«me
+, 
+mode_t
+ 
+mode
+)
+
+161 ()
+vn
+;
+
+162 ()
+«me
+;
+
+163 ()
+mode
+;
+
+164  
+ENOTDIR
+;
+
+165 
+	}
+}
+
+168 
+	$v›Áû_mkdú_nosys
+(
+vnode
+ *
+vn
+, c⁄° *
+«me
+, 
+mode_t
+ 
+mode
+)
+
+170 ()
+vn
+;
+
+171 ()
+«me
+;
+
+172 ()
+mode
+;
+
+173  
+ENOSYS
+;
+
+174 
+	}
+}
+
+180 
+	$v›Áû_lök_nŸdú
+(
+vnode
+ *
+dú
+, c⁄° *
+«me
+, vnodê*
+fûe
+)
+
+182 ()
+dú
+;
+
+183 ()
+«me
+;
+
+184 ()
+fûe
+;
+
+185  
+ENOTDIR
+;
+
+186 
+	}
+}
+
+189 
+	$v›Áû_lök_nosys
+(
+vnode
+ *
+dú
+, c⁄° *
+«me
+, vnodê*
+fûe
+)
+
+191 ()
+dú
+;
+
+192 ()
+«me
+;
+
+193 ()
+fûe
+;
+
+194  
+ENOSYS
+;
+
+195 
+	}
+}
+
+201 
+	$v›Áû_°rög_nŸdú
+(
+vnode
+ *
+vn
+, c⁄° *
+«me
+)
+
+203 ()
+vn
+;
+
+204 ()
+«me
+;
+
+205  
+ENOTDIR
+;
+
+206 
+	}
+}
+
+209 
+	$v›Áû_°rög_nosys
+(
+vnode
+ *
+vn
+, c⁄° *
+«me
+)
+
+211 ()
+vn
+;
+
+212 ()
+«me
+;
+
+213  
+ENOSYS
+;
+
+214 
+	}
+}
+
+220 
+	$v›Áû_ª«me_nŸdú
+(
+vnode
+ *
+‰omdú
+, c⁄° *
+‰om«me
+,
+
+221 
+vnode
+ *
+todú
+, c⁄° *
+t⁄ame
+)
+
+223 ()
+‰omdú
+;
+
+224 ()
+‰om«me
+;
+
+225 ()
+todú
+;
+
+226 ()
+t⁄ame
+;
+
+227  
+ENOTDIR
+;
+
+228 
+	}
+}
+
+231 
+	$v›Áû_ª«me_nosys
+(
+vnode
+ *
+‰omdú
+, c⁄° *
+‰om«me
+,
+
+232 
+vnode
+ *
+todú
+, c⁄° *
+t⁄ame
+)
+
+234 ()
+‰omdú
+;
+
+235 ()
+‰om«me
+;
+
+236 ()
+todú
+;
+
+237 ()
+t⁄ame
+;
+
+238  
+ENOSYS
+;
+
+239 
+	}
+}
+
+245 
+	$v›Áû_lookup_nŸdú
+(
+vnode
+ *
+vn
+, *
+∑th
+, vnodê**
+ªsu…
+)
+
+247 ()
+vn
+;
+
+248 ()
+∑th
+;
+
+249 ()
+ªsu…
+;
+
+250  
+ENOTDIR
+;
+
+251 
+	}
+}
+
+254 
+	$v›Áû_look∑ª¡_nŸdú
+(
+vnode
+ *
+vn
+, *
+∑th
+, vnodê**
+ªsu…
+,
+
+255 *
+buf
+, 
+size_t
+ 
+Àn
+)
+
+257 ()
+vn
+;
+
+258 ()
+∑th
+;
+
+259 ()
+ªsu…
+;
+
+260 ()
+buf
+;
+
+261 ()
+Àn
+;
+
+262  
+ENOTDIR
+;
+
+263 
+	}
+}
+
+	@vfslist.c
+
+35 
+	#VFSINLINE
+
+
+	)
+
+37 
+	~<ty≥s.h
+>
+
+38 
+	~<kîn/î∫o.h
+>
+
+39 
+	~<lib.h
+>
+
+40 
+	~<¨øy.h
+>
+
+41 
+	~<synch.h
+>
+
+42 
+	~<vfs.h
+>
+
+43 
+	~<fs.h
+>
+
+44 
+	~<vnode.h
+>
+
+45 
+	~<devi˚.h
+>
+
+77 
+	sknowndev
+ {
+
+78 *
+	mkd_«me
+;
+
+79 *
+	mkd_øw«me
+;
+
+80 
+devi˚
+ *
+	mkd_devi˚
+;
+
+81 
+vnode
+ *
+	mkd_vnode
+;
+
+82 
+fs
+ *
+	mkd_fs
+;
+
+85 
+DECLARRAY
+(
+knowndev
+, 
+__UNUSED
+ 
+ölöe
+);
+
+86 
+DEFARRAY
+(
+knowndev
+, 
+__UNUSED
+ 
+ölöe
+);
+
+88 
+knowndev¨øy
+ *
+	gknowndevs
+;
+
+91 
+lock
+ *
+	gvfs_biglock
+;
+
+92 
+	gvfs_biglock_dïth
+;
+
+99 
+	$vfs_boŸ°øp
+()
+
+101 
+knowndevs
+ = 
+	`knowndev¨øy_¸óã
+();
+
+102 i‡(
+knowndevs
+==
+NULL
+) {
+
+103 
+	`∑nic
+("vfs: CouldÇot create knowndevsárray\n");
+
+106 
+vfs_biglock
+ = 
+	`lock_¸óã
+("vfs_biglock");
+
+107 i‡(
+vfs_biglock
+==
+NULL
+) {
+
+108 
+	`∑nic
+("vfs: CouldÇot create vfs bigÜock\n");
+
+110 
+vfs_biglock_dïth
+ = 0;
+
+112 
+	`devnuŒ_¸óã
+();
+
+113 
+	`£mfs_boŸ°øp
+();
+
+114 
+	}
+}
+
+124 
+	$vfs_biglock_acquúe
+()
+
+126 i‡(!
+	`lock_do_i_hﬁd
+(
+vfs_biglock
+)) {
+
+127 
+	`lock_acquúe
+(
+vfs_biglock
+);
+
+129 
+vfs_biglock_dïth
+++;
+
+130 
+	}
+}
+
+133 
+	$vfs_biglock_ªÀa£
+()
+
+135 
+	`KASSERT
+(
+	`lock_do_i_hﬁd
+(
+vfs_biglock
+));
+
+136 
+	`KASSERT
+(
+vfs_biglock_dïth
+ > 0);
+
+137 
+vfs_biglock_dïth
+--;
+
+138 i‡(
+vfs_biglock_dïth
+ == 0) {
+
+139 
+	`lock_ªÀa£
+(
+vfs_biglock
+);
+
+141 
+	}
+}
+
+143 
+boﬁ
+
+
+144 
+	$vfs_biglock_do_i_hﬁd
+()
+
+146  
+	`lock_do_i_hﬁd
+(
+vfs_biglock
+);
+
+147 
+	}
+}
+
+153 
+	$vfs_sync
+()
+
+155 
+knowndev
+ *
+dev
+;
+
+156 
+i
+, 
+num
+;
+
+158 
+	`vfs_biglock_acquúe
+();
+
+160 
+num
+ = 
+	`knowndev¨øy_num
+(
+knowndevs
+);
+
+161 
+i
+=0; i<
+num
+; i++) {
+
+162 
+dev
+ = 
+	`knowndev¨øy_gë
+(
+knowndevs
+, 
+i
+);
+
+163 i‡(
+dev
+->
+kd_fs
+ !
+NULL
+) {
+
+164  
+	`FSOP_SYNC
+(
+dev
+->
+kd_fs
+);
+
+168 
+	`vfs_biglock_ªÀa£
+();
+
+171 
+	}
+}
+
+178 
+	$vfs_gëroŸ
+(c⁄° *
+dev«me
+, 
+vnode
+ **
+ªsu…
+)
+
+180 
+knowndev
+ *
+kd
+;
+
+181 
+i
+, 
+num
+;
+
+183 
+	`KASSERT
+(
+	`vfs_biglock_do_i_hﬁd
+());
+
+185 
+num
+ = 
+	`knowndev¨øy_num
+(
+knowndevs
+);
+
+186 
+i
+=0; i<
+num
+; i++) {
+
+187 
+kd
+ = 
+	`knowndev¨øy_gë
+(
+knowndevs
+, 
+i
+);
+
+198 i‡(
+kd
+->
+kd_fs
+!=
+NULL
+) {
+
+199 c⁄° *
+vﬁ«me
+;
+
+200 
+vﬁ«me
+ = 
+	`FSOP_GETVOLNAME
+(
+kd
+->
+kd_fs
+);
+
+202 i‡(!
+	`°rcmp
+(
+kd
+->
+kd_«me
+, 
+dev«me
+) ||
+
+203 (
+vﬁ«me
+!=
+NULL
+ && !
+	`°rcmp
+(vﬁ«me, 
+dev«me
+))) {
+
+204 *
+ªsu…
+ = 
+	`FSOP_GETROOT
+(
+kd
+->
+kd_fs
+);
+
+209 i‡(
+kd
+->
+kd_øw«me
+!=
+NULL
+ &&
+
+210 !
+	`°rcmp
+(
+kd
+->
+kd_«me
+, 
+dev«me
+)) {
+
+211  
+ENXIO
+;
+
+220 i‡(!
+	`°rcmp
+(
+kd
+->
+kd_«me
+, 
+dev«me
+)) {
+
+221 
+	`KASSERT
+(
+kd
+->
+kd_fs
+==
+NULL
+);
+
+222 
+	`KASSERT
+(
+kd
+->
+kd_øw«me
+==
+NULL
+);
+
+223 
+	`KASSERT
+(
+kd
+->
+kd_devi˚
+ !
+NULL
+);
+
+224 
+	`VOP_INCREF
+(
+kd
+->
+kd_vnode
+);
+
+225 *
+ªsu…
+ = 
+kd
+->
+kd_vnode
+;
+
+233 i‡(
+kd
+->
+kd_øw«me
+!=
+NULL
+ && !
+	`°rcmp
+(kd->kd_øw«me, 
+dev«me
+)) {
+
+234 
+	`KASSERT
+(
+kd
+->
+kd_devi˚
+ !
+NULL
+);
+
+235 
+	`VOP_INCREF
+(
+kd
+->
+kd_vnode
+);
+
+236 *
+ªsu…
+ = 
+kd
+->
+kd_vnode
+;
+
+251  
+ENODEV
+;
+
+252 
+	}
+}
+
+258 
+	$vfs_gëdev«me
+(
+fs
+ *fs)
+
+260 
+knowndev
+ *
+kd
+;
+
+261 
+i
+, 
+num
+;
+
+263 
+	`KASSERT
+(
+fs
+ !
+NULL
+);
+
+265 
+	`KASSERT
+(
+	`vfs_biglock_do_i_hﬁd
+());
+
+267 
+num
+ = 
+	`knowndev¨øy_num
+(
+knowndevs
+);
+
+268 
+i
+=0; i<
+num
+; i++) {
+
+269 
+kd
+ = 
+	`knowndev¨øy_gë
+(
+knowndevs
+, 
+i
+);
+
+271 i‡(
+kd
+->
+kd_fs
+ =
+fs
+) {
+
+278  
+kd
+->
+kd_«me
+;
+
+282  
+NULL
+;
+
+283 
+	}
+}
+
+290 
+	$mkøw«me
+(c⁄° *
+«me
+)
+
+292 *
+s
+ = 
+	`kmÆloc
+(
+	`°æí
+(
+«me
+)+3+1);
+
+293 i‡(!
+s
+) {
+
+294  
+NULL
+;
+
+296 
+	`°r˝y
+(
+s
+, 
+«me
+);
+
+297 
+	`°rˇt
+(
+s
+, "raw");
+
+298  
+s
+;
+
+299 
+	}
+}
+
+307 
+ölöe
+
+
+309 
+	$ßme°rög
+(c⁄° *
+a
+, c⁄° *
+b
+)
+
+311 i‡(
+a
+==
+NULL
+ || 
+b
+==NULL) {
+
+314  !
+	`°rcmp
+(
+a
+, 
+b
+);
+
+315 
+	}
+}
+
+322 
+ölöe
+
+
+324 
+	$ßme°rög3
+(c⁄° *
+a
+, c⁄° *
+b
+, c⁄° *
+c
+, c⁄° *
+d
+)
+
+326  
+	`ßme°rög
+(
+a
+,
+b
+Ë|| same°rög◊,
+c
+Ë|| same°rög◊,
+d
+);
+
+327 
+	}
+}
+
+336 
+	$bad«mes
+(c⁄° *
+n1
+, c⁄° *
+n2
+, c⁄° *
+n3
+)
+
+338 c⁄° *
+vﬁ«me
+;
+
+339 
+i
+, 
+num
+;
+
+340 
+knowndev
+ *
+kd
+;
+
+342 
+	`KASSERT
+(
+	`vfs_biglock_do_i_hﬁd
+());
+
+344 
+num
+ = 
+	`knowndev¨øy_num
+(
+knowndevs
+);
+
+345 
+i
+=0; i<
+num
+; i++) {
+
+346 
+kd
+ = 
+	`knowndev¨øy_gë
+(
+knowndevs
+, 
+i
+);
+
+348 i‡(
+kd
+->
+kd_fs
+) {
+
+349 
+vﬁ«me
+ = 
+	`FSOP_GETVOLNAME
+(
+kd
+->
+kd_fs
+);
+
+350 i‡(
+	`ßme°rög3
+(
+vﬁ«me
+, 
+n1
+, 
+n2
+, 
+n3
+)) {
+
+355 i‡(
+	`ßme°rög3
+(
+kd
+->
+kd_øw«me
+, 
+n1
+, 
+n2
+, 
+n3
+) ||
+
+356 
+	`ßme°rög3
+(
+kd
+->
+kd_«me
+, 
+n1
+, 
+n2
+, 
+n3
+)) {
+
+362 
+	}
+}
+
+373 
+	$vfs_dﬂdd
+(c⁄° *
+d«me
+, 
+mou¡abÀ
+, 
+devi˚
+ *
+dev
+, 
+fs
+ *fs)
+
+375 *
+«me
+=
+NULL
+, *
+øw«me
+=NULL;
+
+376 
+knowndev
+ *
+kd
+=
+NULL
+;
+
+377 
+vnode
+ *vnode=
+NULL
+;
+
+378 c⁄° *
+vﬁ«me
+=
+NULL
+;
+
+379 
+ödex
+;
+
+380 
+ªsu…
+;
+
+382 
+	`vfs_biglock_acquúe
+();
+
+384 
+«me
+ = 
+	`k°rdup
+(
+d«me
+);
+
+385 i‡(
+«me
+==
+NULL
+) {
+
+386 
+nomem
+;
+
+388 i‡(
+mou¡abÀ
+) {
+
+389 
+øw«me
+ = 
+	`mkøw«me
+(
+«me
+);
+
+390 i‡(
+øw«me
+==
+NULL
+) {
+
+391 
+nomem
+;
+
+395 
+vnode
+ = 
+	`dev_¸óã_vnode
+(
+dev
+);
+
+396 i‡(
+vnode
+==
+NULL
+) {
+
+397 
+nomem
+;
+
+400 
+kd
+ = 
+	`kmÆloc
+((
+knowndev
+));
+
+401 i‡(
+kd
+==
+NULL
+) {
+
+402 
+nomem
+;
+
+405 
+kd
+->
+kd_«me
+ = 
+«me
+;
+
+406 
+kd
+->
+kd_øw«me
+ = 
+øw«me
+;
+
+407 
+kd
+->
+kd_devi˚
+ = 
+dev
+;
+
+408 
+kd
+->
+kd_vnode
+ = 
+vnode
+;
+
+409 
+kd
+->
+kd_fs
+ = 
+fs
+;
+
+411 i‡(
+fs
+!=
+NULL
+) {
+
+412 
+vﬁ«me
+ = 
+	`FSOP_GETVOLNAME
+(
+fs
+);
+
+415 i‡(
+	`bad«mes
+(
+«me
+, 
+øw«me
+, 
+vﬁ«me
+)) {
+
+416 
+	`vfs_biglock_ªÀa£
+();
+
+417  
+EEXIST
+;
+
+420 
+ªsu…
+ = 
+	`knowndev¨øy_add
+(
+knowndevs
+, 
+kd
+, &
+ödex
+);
+
+422 i‡(
+ªsu…
+ =0 && 
+dev
+ !
+NULL
+) {
+
+424 
+dev
+->
+d_devnumbî
+ = 
+ödex
++1;
+
+427 
+	`vfs_biglock_ªÀa£
+();
+
+428  
+ªsu…
+;
+
+430 
+nomem
+:
+
+432 i‡(
+«me
+) {
+
+433 
+	`k‰ì
+(
+«me
+);
+
+435 i‡(
+øw«me
+) {
+
+436 
+	`k‰ì
+(
+øw«me
+);
+
+438 i‡(
+vnode
+) {
+
+439 
+	`k‰ì
+(
+vnode
+);
+
+441 i‡(
+kd
+) {
+
+442 
+	`k‰ì
+(
+kd
+);
+
+445 
+	`vfs_biglock_ªÀa£
+();
+
+446  
+ENOMEM
+;
+
+447 
+	}
+}
+
+454 
+	$vfs_adddev
+(c⁄° *
+dev«me
+, 
+devi˚
+ *
+dev
+, 
+mou¡abÀ
+)
+
+456  
+	`vfs_dﬂdd
+(
+dev«me
+, 
+mou¡abÀ
+, 
+dev
+, 
+NULL
+);
+
+457 
+	}
+}
+
+465 
+	$vfs_addfs
+(c⁄° *
+dev«me
+, 
+fs
+ *fs)
+
+467  
+	`vfs_dﬂdd
+(
+dev«me
+, 0, 
+NULL
+, 
+fs
+);
+
+468 
+	}
+}
+
+478 
+	$födmou¡
+(c⁄° *
+dev«me
+, 
+knowndev
+ **
+ªsu…
+)
+
+480 
+knowndev
+ *
+dev
+;
+
+481 
+i
+, 
+num
+;
+
+482 
+boﬁ
+ 
+found
+ = 
+Ál£
+;
+
+484 
+	`KASSERT
+(
+	`vfs_biglock_do_i_hﬁd
+());
+
+486 
+num
+ = 
+	`knowndev¨øy_num
+(
+knowndevs
+);
+
+487 
+i
+=0; !
+found
+ && i<
+num
+; i++) {
+
+488 
+dev
+ = 
+	`knowndev¨øy_gë
+(
+knowndevs
+, 
+i
+);
+
+489 i‡(
+dev
+->
+kd_øw«me
+==
+NULL
+) {
+
+494 i‡(!
+	`°rcmp
+(
+dev«me
+, 
+dev
+->
+kd_«me
+)) {
+
+495 *
+ªsu…
+ = 
+dev
+;
+
+496 
+found
+ = 
+åue
+;
+
+500  
+found
+ ? 0 : 
+ENODEV
+;
+
+501 
+	}
+}
+
+510 
+vfs_mou¡
+(c⁄° *
+dev«me
+, *
+d©a
+,
+
+511 (*
+mou¡func
+)(*
+d©a
+, 
+devi˚
+ *, 
+fs
+ **
+ªt
+))
+
+513 c⁄° *
+vﬁ«me
+;
+
+514 
+knowndev
+ *
+kd
+;
+
+515 
+fs
+ *fs;
+
+516 
+ªsu…
+;
+
+518 
+	`vfs_biglock_acquúe
+();
+
+520 
+ªsu…
+ = 
+	`födmou¡
+(
+dev«me
+, &
+kd
+);
+
+521 i‡(
+ªsu…
+) {
+
+522 
+	`vfs_biglock_ªÀa£
+();
+
+523  
+ªsu…
+;
+
+526 i‡(
+kd
+->
+kd_fs
+ !
+NULL
+) {
+
+527 
+	`vfs_biglock_ªÀa£
+();
+
+528  
+EBUSY
+;
+
+530 
+	`KASSERT
+(
+kd
+->
+kd_øw«me
+ !
+NULL
+);
+
+531 
+	`KASSERT
+(
+kd
+->
+kd_devi˚
+ !
+NULL
+);
+
+533 
+ªsu…
+ = 
+	`mou¡func
+(
+d©a
+, 
+kd
+->
+kd_devi˚
+, &
+fs
+);
+
+534 i‡(
+ªsu…
+) {
+
+535 
+	`vfs_biglock_ªÀa£
+();
+
+536  
+ªsu…
+;
+
+539 
+	`KASSERT
+(
+fs
+ !
+NULL
+);
+
+541 
+kd
+->
+kd_fs
+ = 
+fs
+;
+
+543 
+vﬁ«me
+ = 
+	`FSOP_GETVOLNAME
+(
+fs
+);
+
+544 
+	`k¥ötf
+("vfs: Mounted %s: on %s\n",
+
+545 
+vﬁ«me
+ ? vﬁ«mê: 
+kd
+->
+kd_«me
+, kd->kd_name);
+
+547 
+	`vfs_biglock_ªÀa£
+();
+
+549 
+	}
+}
+
+556 
+	$vfs_unmou¡
+(c⁄° *
+dev«me
+)
+
+558 
+knowndev
+ *
+kd
+;
+
+559 
+ªsu…
+;
+
+561 
+	`vfs_biglock_acquúe
+();
+
+563 
+ªsu…
+ = 
+	`födmou¡
+(
+dev«me
+, &
+kd
+);
+
+564 i‡(
+ªsu…
+) {
+
+565 
+Áû
+;
+
+568 i‡(
+kd
+->
+kd_fs
+ =
+NULL
+) {
+
+569 
+ªsu…
+ = 
+EINVAL
+;
+
+570 
+Áû
+;
+
+572 
+	`KASSERT
+(
+kd
+->
+kd_øw«me
+ !
+NULL
+);
+
+573 
+	`KASSERT
+(
+kd
+->
+kd_devi˚
+ !
+NULL
+);
+
+576 
+ªsu…
+ = 
+	`FSOP_SYNC
+(
+kd
+->
+kd_fs
+);
+
+577 i‡(
+ªsu…
+) {
+
+578 
+Áû
+;
+
+581 
+ªsu…
+ = 
+	`FSOP_UNMOUNT
+(
+kd
+->
+kd_fs
+);
+
+582 i‡(
+ªsu…
+) {
+
+583 
+Áû
+;
+
+586 
+	`k¥ötf
+("vfs: Unmou¡ed %s:\n", 
+kd
+->
+kd_«me
+);
+
+589 
+kd
+->
+kd_fs
+ = 
+NULL
+;
+
+591 
+	`KASSERT
+(
+ªsu…
+==0);
+
+593 
+Áû
+:
+
+594 
+	`vfs_biglock_ªÀa£
+();
+
+595  
+ªsu…
+;
+
+596 
+	}
+}
+
+602 
+	$vfs_unmou¡Æl
+()
+
+604 
+knowndev
+ *
+dev
+;
+
+605 
+i
+, 
+num
+;
+
+606 
+ªsu…
+;
+
+608 
+	`vfs_biglock_acquúe
+();
+
+610 
+num
+ = 
+	`knowndev¨øy_num
+(
+knowndevs
+);
+
+611 
+i
+=0; i<
+num
+; i++) {
+
+612 
+dev
+ = 
+	`knowndev¨øy_gë
+(
+knowndevs
+, 
+i
+);
+
+613 i‡(
+dev
+->
+kd_øw«me
+ =
+NULL
+) {
+
+617 i‡(
+dev
+->
+kd_fs
+ =
+NULL
+) {
+
+622 
+	`k¥ötf
+("vfs: Unmou¡ög %s:\n", 
+dev
+->
+kd_«me
+);
+
+624 
+ªsu…
+ = 
+	`FSOP_SYNC
+(
+dev
+->
+kd_fs
+);
+
+625 i‡(
+ªsu…
+) {
+
+626 
+	`k¥ötf
+("vfs: Warning: sync failed for %s: %s,Årying "
+
+627 "agaö\n", 
+dev
+->
+kd_«me
+, 
+	`°ªº‹
+(
+ªsu…
+));
+
+629 
+ªsu…
+ = 
+	`FSOP_SYNC
+(
+dev
+->
+kd_fs
+);
+
+630 i‡(
+ªsu…
+) {
+
+631 
+	`k¥ötf
+("vfs: Warning: sync failed secondÅime"
+
+633 
+dev
+->
+kd_«me
+, 
+	`°ªº‹
+(
+ªsu…
+));
+
+642 
+ªsu…
+ = 
+	`FSOP_UNMOUNT
+(
+dev
+->
+kd_fs
+);
+
+643 i‡(
+ªsu…
+ =
+EBUSY
+) {
+
+644 
+	`k¥ötf
+("vfs: Cannot unmount %s: (busy)\n",
+
+645 
+dev
+->
+kd_«me
+);
+
+648 i‡(
+ªsu…
+) {
+
+649 
+	`k¥ötf
+("vfs: Warning: unmount failed for %s:"
+
+651 
+dev
+->
+kd_«me
+, 
+	`°ªº‹
+(
+ªsu…
+));
+
+656 
+dev
+->
+kd_fs
+ = 
+NULL
+;
+
+659 
+	`vfs_biglock_ªÀa£
+();
+
+662 
+	}
+}
+
+	@vfslookup.c
+
+34 
+	~<ty≥s.h
+>
+
+35 
+	~<kîn/î∫o.h
+>
+
+36 
+	~<limôs.h
+>
+
+37 
+	~<lib.h
+>
+
+38 
+	~<synch.h
+>
+
+39 
+	~<vfs.h
+>
+
+40 
+	~<fs.h
+>
+
+41 
+	~<vnode.h
+>
+
+43 
+vnode
+ *
+	gboŸfs_vnode
+ = 
+NULL
+;
+
+50 
+	$ch™ge_boŸfs
+(
+vnode
+ *
+√wvn
+)
+
+52 
+vnode
+ *
+ﬁdvn
+;
+
+54 
+ﬁdvn
+ = 
+boŸfs_vnode
+;
+
+55 
+boŸfs_vnode
+ = 
+√wvn
+;
+
+57 i‡(
+ﬁdvn
+ !
+NULL
+) {
+
+58 
+	`VOP_DECREF
+(
+ﬁdvn
+);
+
+60 
+	}
+}
+
+71 
+	$vfs_£tboŸfs
+(c⁄° *
+f¢ame
+)
+
+73 
+tmp
+[
+NAME_MAX
++1];
+
+74 *
+s
+;
+
+75 
+ªsu…
+;
+
+76 
+vnode
+ *
+√wguy
+;
+
+78 
+	`vfs_biglock_acquúe
+();
+
+80 
+	`¢¥ötf
+(
+tmp
+, —mp)-1, "%s", 
+f¢ame
+);
+
+81 
+s
+ = 
+	`°rchr
+(
+tmp
+, ':');
+
+82 i‡(
+s
+) {
+
+84 i‡(
+	`°æí
+(
+s
+)>0) {
+
+85 
+	`vfs_biglock_ªÀa£
+();
+
+86  
+EINVAL
+;
+
+90 
+	`°rˇt
+(
+tmp
+, ":");
+
+93 
+ªsu…
+ = 
+	`vfs_chdú
+(
+tmp
+);
+
+94 i‡(
+ªsu…
+) {
+
+95 
+	`vfs_biglock_ªÀa£
+();
+
+96  
+ªsu…
+;
+
+99 
+ªsu…
+ = 
+	`vfs_gëcurdú
+(&
+√wguy
+);
+
+100 i‡(
+ªsu…
+) {
+
+101 
+	`vfs_biglock_ªÀa£
+();
+
+102  
+ªsu…
+;
+
+105 
+	`ch™ge_boŸfs
+(
+√wguy
+);
+
+107 
+	`vfs_biglock_ªÀa£
+();
+
+109 
+	}
+}
+
+115 
+	$vfs_˛órboŸfs
+()
+
+117 
+	`vfs_biglock_acquúe
+();
+
+118 
+	`ch™ge_boŸfs
+(
+NULL
+);
+
+119 
+	`vfs_biglock_ªÀa£
+();
+
+120 
+	}
+}
+
+130 
+	$gëdevi˚
+(*
+∑th
+, **
+sub∑th
+, 
+vnode
+ **
+°¨tvn
+)
+
+132 
+¶ash
+=-1, 
+cﬁ⁄
+=-1, 
+i
+;
+
+133 
+vnode
+ *
+vn
+;
+
+134 
+ªsu…
+;
+
+136 
+	`KASSERT
+(
+	`vfs_biglock_do_i_hﬁd
+());
+
+142 
+i
+=0; 
+∑th
+[i]; i++) {
+
+143 i‡(
+∑th
+[
+i
+]==':') {
+
+144 
+cﬁ⁄
+ = 
+i
+;
+
+147 i‡(
+∑th
+[
+i
+]=='/') {
+
+148 
+¶ash
+ = 
+i
+;
+
+153 i‡(
+cﬁ⁄
+ < 0 && 
+¶ash
+ != 0) {
+
+161 *
+sub∑th
+ = 
+∑th
+;
+
+162  
+	`vfs_gëcurdú
+(
+°¨tvn
+);
+
+165 i‡(
+cﬁ⁄
+>0) {
+
+167 
+∑th
+[
+cﬁ⁄
+]=0;
+
+168 
+∑th
+[
+cﬁ⁄
++1]=='/') {
+
+170 
+cﬁ⁄
+++;
+
+172 *
+sub∑th
+ = &
+∑th
+[
+cﬁ⁄
++1];
+
+174 
+ªsu…
+ = 
+	`vfs_gëroŸ
+(
+∑th
+, 
+°¨tvn
+);
+
+175 i‡(
+ªsu…
+) {
+
+176  
+ªsu…
+;
+
+188 
+	`KASSERT
+(
+cﬁ⁄
+==0 || 
+¶ash
+==0);
+
+190 i‡(
+∑th
+[0]=='/') {
+
+191 i‡(
+boŸfs_vnode
+==
+NULL
+) {
+
+192  
+ENOENT
+;
+
+194 
+	`VOP_INCREF
+(
+boŸfs_vnode
+);
+
+195 *
+°¨tvn
+ = 
+boŸfs_vnode
+;
+
+198 
+	`KASSERT
+(
+∑th
+[0]==':');
+
+200 
+ªsu…
+ = 
+	`vfs_gëcurdú
+(&
+vn
+);
+
+201 i‡(
+ªsu…
+) {
+
+202  
+ªsu…
+;
+
+209 
+	`KASSERT
+(
+vn
+->
+vn_fs
+!=
+NULL
+);
+
+211 *
+°¨tvn
+ = 
+	`FSOP_GETROOT
+(
+vn
+->
+vn_fs
+);
+
+213 
+	`VOP_DECREF
+(
+vn
+);
+
+216 
+∑th
+[1]=='/') {
+
+218 
+∑th
+++;
+
+221 *
+sub∑th
+ = 
+∑th
++1;
+
+224 
+	}
+}
+
+232 
+	$vfs_look∑ª¡
+(*
+∑th
+, 
+vnode
+ **
+ªtvÆ
+,
+
+233 *
+buf
+, 
+size_t
+ 
+buÊí
+)
+
+235 
+vnode
+ *
+°¨tvn
+;
+
+236 
+ªsu…
+;
+
+238 
+	`vfs_biglock_acquúe
+();
+
+240 
+ªsu…
+ = 
+	`gëdevi˚
+(
+∑th
+, &∑th, &
+°¨tvn
+);
+
+241 i‡(
+ªsu…
+) {
+
+242 
+	`vfs_biglock_ªÀa£
+();
+
+243  
+ªsu…
+;
+
+246 i‡(
+	`°æí
+(
+∑th
+)==0) {
+
+252 
+ªsu…
+ = 
+EINVAL
+;
+
+255 
+ªsu…
+ = 
+	`VOP_LOOKPARENT
+(
+°¨tvn
+, 
+∑th
+, 
+ªtvÆ
+, 
+buf
+, 
+buÊí
+);
+
+258 
+	`VOP_DECREF
+(
+°¨tvn
+);
+
+260 
+	`vfs_biglock_ªÀa£
+();
+
+261  
+ªsu…
+;
+
+262 
+	}
+}
+
+265 
+	$vfs_lookup
+(*
+∑th
+, 
+vnode
+ **
+ªtvÆ
+)
+
+267 
+vnode
+ *
+°¨tvn
+;
+
+268 
+ªsu…
+;
+
+270 
+	`vfs_biglock_acquúe
+();
+
+272 
+ªsu…
+ = 
+	`gëdevi˚
+(
+∑th
+, &∑th, &
+°¨tvn
+);
+
+273 i‡(
+ªsu…
+) {
+
+274 
+	`vfs_biglock_ªÀa£
+();
+
+275  
+ªsu…
+;
+
+278 i‡(
+	`°æí
+(
+∑th
+)==0) {
+
+279 *
+ªtvÆ
+ = 
+°¨tvn
+;
+
+280 
+	`vfs_biglock_ªÀa£
+();
+
+284 
+ªsu…
+ = 
+	`VOP_LOOKUP
+(
+°¨tvn
+, 
+∑th
+, 
+ªtvÆ
+);
+
+286 
+	`VOP_DECREF
+(
+°¨tvn
+);
+
+287 
+	`vfs_biglock_ªÀa£
+();
+
+288  
+ªsu…
+;
+
+289 
+	}
+}
+
+	@vfspath.c
+
+34 
+	~<ty≥s.h
+>
+
+35 
+	~<kîn/î∫o.h
+>
+
+36 
+	~<kîn/f˙é.h
+>
+
+37 
+	~<limôs.h
+>
+
+38 
+	~<lib.h
+>
+
+39 
+	~<vfs.h
+>
+
+40 
+	~<vnode.h
+>
+
+45 
+	$vfs_›í
+(*
+∑th
+, 
+›íÊags
+, 
+mode_t
+ 
+mode
+, 
+vnode
+ **
+ªt
+)
+
+47 
+how
+;
+
+48 
+ªsu…
+;
+
+49 
+ˇnwrôe
+;
+
+50 
+vnode
+ *
+vn
+ = 
+NULL
+;
+
+52 
+how
+ = 
+›íÊags
+ & 
+O_ACCMODE
+;
+
+54 
+how
+) {
+
+55 
+O_RDONLY
+:
+
+56 
+ˇnwrôe
+=0;
+
+58 
+O_WRONLY
+:
+
+59 
+O_RDWR
+:
+
+60 
+ˇnwrôe
+=1;
+
+63  
+EINVAL
+;
+
+66 i‡(
+›íÊags
+ & 
+O_CREAT
+) {
+
+67 
+«me
+[
+NAME_MAX
++1];
+
+68 
+vnode
+ *
+dú
+;
+
+69 
+ex˛
+ = (
+›íÊags
+ & 
+O_EXCL
+)!=0;
+
+71 
+ªsu…
+ = 
+	`vfs_look∑ª¡
+(
+∑th
+, &
+dú
+, 
+«me
+, (name));
+
+72 i‡(
+ªsu…
+) {
+
+73  
+ªsu…
+;
+
+76 
+ªsu…
+ = 
+	`VOP_CREAT
+(
+dú
+, 
+«me
+, 
+ex˛
+, 
+mode
+, &
+vn
+);
+
+78 
+	`VOP_DECREF
+(
+dú
+);
+
+81 
+ªsu…
+ = 
+	`vfs_lookup
+(
+∑th
+, &
+vn
+);
+
+84 i‡(
+ªsu…
+) {
+
+85  
+ªsu…
+;
+
+88 
+	`KASSERT
+(
+vn
+ !
+NULL
+);
+
+90 
+ªsu…
+ = 
+	`VOP_EACHOPEN
+(
+vn
+, 
+›íÊags
+);
+
+91 i‡(
+ªsu…
+) {
+
+92 
+	`VOP_DECREF
+(
+vn
+);
+
+93  
+ªsu…
+;
+
+96 i‡(
+›íÊags
+ & 
+O_TRUNC
+) {
+
+97 i‡(
+ˇnwrôe
+==0) {
+
+98 
+ªsu…
+ = 
+EINVAL
+;
+
+101 
+ªsu…
+ = 
+	`VOP_TRUNCATE
+(
+vn
+, 0);
+
+103 i‡(
+ªsu…
+) {
+
+104 
+	`VOP_DECREF
+(
+vn
+);
+
+105  
+ªsu…
+;
+
+109 *
+ªt
+ = 
+vn
+;
+
+112 
+	}
+}
+
+116 
+	$vfs_˛o£
+(
+vnode
+ *
+vn
+)
+
+132 
+	`VOP_DECREF
+(
+vn
+);
+
+133 
+	}
+}
+
+137 
+	$vfs_ªmove
+(*
+∑th
+)
+
+139 
+vnode
+ *
+dú
+;
+
+140 
+«me
+[
+NAME_MAX
++1];
+
+141 
+ªsu…
+;
+
+143 
+ªsu…
+ = 
+	`vfs_look∑ª¡
+(
+∑th
+, &
+dú
+, 
+«me
+, (name));
+
+144 i‡(
+ªsu…
+) {
+
+145  
+ªsu…
+;
+
+148 
+ªsu…
+ = 
+	`VOP_REMOVE
+(
+dú
+, 
+«me
+);
+
+149 
+	`VOP_DECREF
+(
+dú
+);
+
+151  
+ªsu…
+;
+
+152 
+	}
+}
+
+156 
+	$vfs_ª«me
+(*
+ﬁd∑th
+, *
+√w∑th
+)
+
+158 
+vnode
+ *
+ﬁddú
+;
+
+159 
+ﬁd«me
+[
+NAME_MAX
++1];
+
+160 
+vnode
+ *
+√wdú
+;
+
+161 
+√w«me
+[
+NAME_MAX
++1];
+
+162 
+ªsu…
+;
+
+164 
+ªsu…
+ = 
+	`vfs_look∑ª¡
+(
+ﬁd∑th
+, &
+ﬁddú
+, 
+ﬁd«me
+, (oldname));
+
+165 i‡(
+ªsu…
+) {
+
+166  
+ªsu…
+;
+
+168 
+ªsu…
+ = 
+	`vfs_look∑ª¡
+(
+√w∑th
+, &
+√wdú
+, 
+√w«me
+, (newname));
+
+169 i‡(
+ªsu…
+) {
+
+170 
+	`VOP_DECREF
+(
+ﬁddú
+);
+
+171  
+ªsu…
+;
+
+174 i‡(
+ﬁddú
+->
+vn_fs
+==
+NULL
+ || 
+√wdú
+->vn_fs==NULL ||
+
+175 
+ﬁddú
+->
+vn_fs
+ !
+√wdú
+->vn_fs) {
+
+176 
+	`VOP_DECREF
+(
+√wdú
+);
+
+177 
+	`VOP_DECREF
+(
+ﬁddú
+);
+
+178  
+EXDEV
+;
+
+181 
+ªsu…
+ = 
+	`VOP_RENAME
+(
+ﬁddú
+, 
+ﬁd«me
+, 
+√wdú
+, 
+√w«me
+);
+
+183 
+	`VOP_DECREF
+(
+√wdú
+);
+
+184 
+	`VOP_DECREF
+(
+ﬁddú
+);
+
+186  
+ªsu…
+;
+
+187 
+	}
+}
+
+191 
+	$vfs_lök
+(*
+ﬁd∑th
+, *
+√w∑th
+)
+
+193 
+vnode
+ *
+ﬁdfûe
+;
+
+194 
+vnode
+ *
+√wdú
+;
+
+195 
+√w«me
+[
+NAME_MAX
++1];
+
+196 
+ªsu…
+;
+
+198 
+ªsu…
+ = 
+	`vfs_lookup
+(
+ﬁd∑th
+, &
+ﬁdfûe
+);
+
+199 i‡(
+ªsu…
+) {
+
+200  
+ªsu…
+;
+
+202 
+ªsu…
+ = 
+	`vfs_look∑ª¡
+(
+√w∑th
+, &
+√wdú
+, 
+√w«me
+, (newname));
+
+203 i‡(
+ªsu…
+) {
+
+204 
+	`VOP_DECREF
+(
+ﬁdfûe
+);
+
+205  
+ªsu…
+;
+
+208 i‡(
+ﬁdfûe
+->
+vn_fs
+==
+NULL
+ || 
+√wdú
+->vn_fs==NULL ||
+
+209 
+ﬁdfûe
+->
+vn_fs
+ !
+√wdú
+->vn_fs) {
+
+210 
+	`VOP_DECREF
+(
+√wdú
+);
+
+211 
+	`VOP_DECREF
+(
+ﬁdfûe
+);
+
+212  
+EXDEV
+;
+
+215 
+ªsu…
+ = 
+	`VOP_LINK
+(
+√wdú
+, 
+√w«me
+, 
+ﬁdfûe
+);
+
+217 
+	`VOP_DECREF
+(
+√wdú
+);
+
+218 
+	`VOP_DECREF
+(
+ﬁdfûe
+);
+
+220  
+ªsu…
+;
+
+221 
+	}
+}
+
+231 
+	$vfs_symlök
+(c⁄° *
+c⁄ã¡s
+, *
+∑th
+)
+
+233 
+vnode
+ *
+√wdú
+;
+
+234 
+√w«me
+[
+NAME_MAX
++1];
+
+235 
+ªsu…
+;
+
+237 
+ªsu…
+ = 
+	`vfs_look∑ª¡
+(
+∑th
+, &
+√wdú
+, 
+√w«me
+, (newname));
+
+238 i‡(
+ªsu…
+) {
+
+239  
+ªsu…
+;
+
+242 
+ªsu…
+ = 
+	`VOP_SYMLINK
+(
+√wdú
+, 
+√w«me
+, 
+c⁄ã¡s
+);
+
+243 
+	`VOP_DECREF
+(
+√wdú
+);
+
+245  
+ªsu…
+;
+
+246 
+	}
+}
+
+256 
+	$vfs_ªadlök
+(*
+∑th
+, 
+uio
+ *uio)
+
+258 
+vnode
+ *
+vn
+;
+
+259 
+ªsu…
+;
+
+261 
+ªsu…
+ = 
+	`vfs_lookup
+(
+∑th
+, &
+vn
+);
+
+262 i‡(
+ªsu…
+) {
+
+263  
+ªsu…
+;
+
+266 
+ªsu…
+ = 
+	`VOP_READLINK
+(
+vn
+, 
+uio
+);
+
+268 
+	`VOP_DECREF
+(
+vn
+);
+
+270  
+ªsu…
+;
+
+271 
+	}
+}
+
+277 
+	$vfs_mkdú
+(*
+∑th
+, 
+mode_t
+ 
+mode
+)
+
+279 
+vnode
+ *
+∑ª¡
+;
+
+280 
+«me
+[
+NAME_MAX
++1];
+
+281 
+ªsu…
+;
+
+283 
+ªsu…
+ = 
+	`vfs_look∑ª¡
+(
+∑th
+, &
+∑ª¡
+, 
+«me
+, (name));
+
+284 i‡(
+ªsu…
+) {
+
+285  
+ªsu…
+;
+
+288 
+ªsu…
+ = 
+	`VOP_MKDIR
+(
+∑ª¡
+, 
+«me
+, 
+mode
+);
+
+290 
+	`VOP_DECREF
+(
+∑ª¡
+);
+
+292  
+ªsu…
+;
+
+293 
+	}
+}
+
+299 
+	$vfs_rmdú
+(*
+∑th
+)
+
+301 
+vnode
+ *
+∑ª¡
+;
+
+302 
+«me
+[
+NAME_MAX
++1];
+
+303 
+ªsu…
+;
+
+305 
+ªsu…
+ = 
+	`vfs_look∑ª¡
+(
+∑th
+, &
+∑ª¡
+, 
+«me
+, (name));
+
+306 i‡(
+ªsu…
+) {
+
+307  
+ªsu…
+;
+
+310 
+ªsu…
+ = 
+	`VOP_RMDIR
+(
+∑ª¡
+, 
+«me
+);
+
+312 
+	`VOP_DECREF
+(
+∑ª¡
+);
+
+314  
+ªsu…
+;
+
+315 
+	}
+}
+
+	@vnode.c
+
+33 
+	~<ty≥s.h
+>
+
+34 
+	~<kîn/î∫o.h
+>
+
+35 
+	~<lib.h
+>
+
+36 
+	~<synch.h
+>
+
+37 
+	~<vfs.h
+>
+
+38 
+	~<vnode.h
+>
+
+44 
+	$vnode_öô
+(
+vnode
+ *
+vn
+, c⁄° 
+vnode_›s
+ *
+›s
+,
+
+45 
+fs
+ *fs, *
+fsd©a
+)
+
+47 
+	`KASSERT
+(
+vn
+ !
+NULL
+);
+
+48 
+	`KASSERT
+(
+›s
+ !
+NULL
+);
+
+50 
+vn
+->
+vn_›s
+ = 
+›s
+;
+
+51 
+vn
+->
+vn_ªfcou¡
+ = 1;
+
+52 
+	`•ölock_öô
+(&
+vn
+->
+vn_cou¡lock
+);
+
+53 
+vn
+->
+vn_fs
+ = 
+fs
+;
+
+54 
+vn
+->
+vn_d©a
+ = 
+fsd©a
+;
+
+56 
+	}
+}
+
+62 
+	$vnode_˛ónup
+(
+vnode
+ *
+vn
+)
+
+64 
+	`KASSERT
+(
+vn
+->
+vn_ªfcou¡
+ == 1);
+
+66 
+	`•ölock_˛ónup
+(&
+vn
+->
+vn_cou¡lock
+);
+
+68 
+vn
+->
+vn_›s
+ = 
+NULL
+;
+
+69 
+vn
+->
+vn_ªfcou¡
+ = 0;
+
+70 
+vn
+->
+vn_fs
+ = 
+NULL
+;
+
+71 
+vn
+->
+vn_d©a
+ = 
+NULL
+;
+
+72 
+	}
+}
+
+80 
+	$vnode_ö¸ef
+(
+vnode
+ *
+vn
+)
+
+82 
+	`KASSERT
+(
+vn
+ !
+NULL
+);
+
+84 
+	`•ölock_acquúe
+(&
+vn
+->
+vn_cou¡lock
+);
+
+85 
+vn
+->
+vn_ªfcou¡
+++;
+
+86 
+	`•ölock_ªÀa£
+(&
+vn
+->
+vn_cou¡lock
+);
+
+87 
+	}
+}
+
+95 
+	$vnode_de¸ef
+(
+vnode
+ *
+vn
+)
+
+97 
+boﬁ
+ 
+de°roy
+;
+
+98 
+ªsu…
+;
+
+100 
+	`KASSERT
+(
+vn
+ !
+NULL
+);
+
+102 
+	`•ölock_acquúe
+(&
+vn
+->
+vn_cou¡lock
+);
+
+104 
+	`KASSERT
+(
+vn
+->
+vn_ªfcou¡
+ > 0);
+
+105 i‡(
+vn
+->
+vn_ªfcou¡
+ > 1) {
+
+106 
+vn
+->
+vn_ªfcou¡
+--;
+
+107 
+de°roy
+ = 
+Ál£
+;
+
+111 
+de°roy
+ = 
+åue
+;
+
+113 
+	`•ölock_ªÀa£
+(&
+vn
+->
+vn_cou¡lock
+);
+
+115 i‡(
+de°roy
+) {
+
+116 
+ªsu…
+ = 
+	`VOP_RECLAIM
+(
+vn
+);
+
+117 i‡(
+ªsu…
+ !0 &&Ñesu… !
+EBUSY
+) {
+
+119 
+	`k¥ötf
+("vfs: Warning: VOP_RECLAIM: %s\n",
+
+120 
+	`°ªº‹
+(
+ªsu…
+));
+
+123 
+	}
+}
+
+130 
+	$vnode_check
+(
+vnode
+ *
+v
+, c⁄° *
+›°r
+)
+
+132 
+	`vfs_biglock_acquúe
+();
+
+134 i‡(
+v
+ =
+NULL
+) {
+
+135 
+	`∑nic
+("vnode_check: v›_%s:ÇuŒ vnode\n", 
+›°r
+);
+
+137 i‡(
+v
+ == (*)0xdeadbeef) {
+
+138 
+	`∑nic
+("vnode_check: v›_%s: dódbì‡vnode\n", 
+›°r
+);
+
+141 i‡(
+v
+->
+vn_›s
+ =
+NULL
+) {
+
+142 
+	`∑nic
+("vnode_check: v›_%s:ÇuŒ op†poöãr\n", 
+›°r
+);
+
+144 i‡(
+v
+->
+vn_›s
+ == (*)0xdeadbeef) {
+
+145 
+	`∑nic
+("vnode_check: v›_%s: dódbì‡›†poöãr\n", 
+›°r
+);
+
+148 i‡(
+v
+->
+vn_›s
+->
+v›_magic
+ !
+VOP_MAGIC
+) {
+
+149 
+	`∑nic
+("vnode_check: vop_%s: ops with bad magicÇumber %lx\n",
+
+150 
+›°r
+, 
+v
+->
+vn_›s
+->
+v›_magic
+);
+
+157 i‡(
+v
+->
+vn_fs
+ == (*)0xdeadbeef) {
+
+158 
+	`∑nic
+("vnode_check: v›_%s: dódbì‡f†poöãr\n", 
+›°r
+);
+
+161 
+	`•ölock_acquúe
+(&
+v
+->
+vn_cou¡lock
+);
+
+163 i‡(
+v
+->
+vn_ªfcou¡
+ < 0) {
+
+164 
+	`∑nic
+("vnode_check: v›_%s:Çeg©ivêªfcou¡ %d\n", 
+›°r
+,
+
+165 
+v
+->
+vn_ªfcou¡
+);
+
+167 i‡(
+v
+->
+vn_ªfcou¡
+ == 0) {
+
+168 
+	`∑nic
+("vnode_check: v›_%s: zîÿªfcou¡\n", 
+›°r
+);
+
+170 i‡(
+v
+->
+vn_ªfcou¡
+ > 0x100000) {
+
+171 
+	`k¥ötf
+("vnode_check: vop_%s: warning:ÜargeÑefcount %d\n",
+
+172 
+›°r
+, 
+v
+->
+vn_ªfcou¡
+);
+
+175 
+	`•ölock_ªÀa£
+(&
+v
+->
+vn_cou¡lock
+);
+
+176 
+	`vfs_biglock_ªÀa£
+();
+
+177 
+	}
+}
+
+	@
+1
+.
+0
+8
+78
+device.c
+devnull.c
+vfscwd.c
+vfsfail.c
+vfslist.c
+vfslookup.c
+vfspath.c
+vnode.c

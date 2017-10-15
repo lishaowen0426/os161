@@ -448,3 +448,15 @@ file		test/synchtest.c
 file		test/malloctest.c
 file		test/fstest.c
 optfile net	test/nettest.c
+
+
+
+file        filetable/filetable.c
+file        syscall/sys_write.c
+file        syscall/sys_open.c
+file        syscall/sys_close.c
+file        syscall/sys_read.c
+file        syscall/sys_lseek.c
+file        syscall/sys_dup2.c
+file        syscall/sys_chdir.c
+file        syscall/sys___getcwd.c

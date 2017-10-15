@@ -50,7 +50,7 @@
 #include <test.h>
 #include <version.h>
 #include "autoconf.h"  // for pseudoconfig
-
+#include <filetable.h>
 
 /*
  * These two pieces of data are maintained by the makefiles and build system.
@@ -63,7 +63,7 @@
  */
 extern const int buildversion;
 extern const char buildconfig[];
-
+struct filetable filetable;
 /*
  * Copyright message for the OS/161 base code.
  */
@@ -209,7 +209,8 @@ void
 kmain(char *arguments)
 {
 	boot();
-
+	filetable_init(&filetable);
+	proc_init(kproc);
 	menu(arguments);
 
 	/* Should not get here */
