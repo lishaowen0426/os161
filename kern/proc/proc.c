@@ -54,6 +54,7 @@
 #include <kern/fcntl.h>
 #include <vfs.h>
 #include <syscall.h>
+#include <pid.h>
 /*
  * The process for the kernel; this holds all the kernel-only threads.
  */
@@ -89,7 +90,7 @@ proc_create(const char *name)
 
 	proc->fd_array=array_create();
 	proc->array_lock=lock_create("l");
-	array_preallocate(proc->fd_array,OPEN_MAX);
+	//array_preallocate(proc->fd_array,OPEN_MAX);
 	return proc;
 }
 
@@ -118,6 +119,19 @@ proc_destroy(struct proc *proc)
 	 * reference to this structure. (Otherwise it would be
 	 * incorrect to destroy it.)
 	 */
+
+	if(proc->fd_array!=NULL){
+		//lock_acquire(proc->array_lock);
+		while(array_num(proc->fd_array)>0){
+			struct fd_entry* fe=(struct fd_entry*)array_get(proc->fd_array,0);
+			KASSERT(fe!=NULL);
+			sys_close(fe->fd);
+		}
+		KASSERT(array_num(proc->fd_array)==0);
+		array_cleanup(proc->fd_array);
+		//lock_release(proc->array_lock);
+		lock_destroy(proc->array_lock);
+	}
 
 	/* VFS fields */
 	if (proc->p_cwd) {
@@ -173,11 +187,39 @@ proc_destroy(struct proc *proc)
 		as_destroy(as);
 	}
 
+	//kprintf("&&&&&&&&&&\n");
 	threadarray_cleanup(&proc->p_threads);
 	spinlock_cleanup(&proc->p_lock);
+	/*fd_table*/
+	//since when close fd, the index will change
+	//so we cannot use loop
+
+
+	/*
+	if(proc->fd_array!=NULL){
+		//lock_acquire(proc->array_lock);
+		while(array_num(proc->fd_array)>0){
+			struct fd_entry* fe=(struct fd_entry*)array_get(proc->fd_array,0);
+			KASSERT(fe!=NULL);
+			kprintf("fd is %d\n",fe->fd);
+			sys_close(fe->fd);
+		}
+		KASSERT(array_num(proc->fd_array)==0);
+		array_cleanup(proc->fd_array);
+		//lock_release(proc->array_lock);
+		lock_destroy(proc->array_lock);
+	}
+	*/
+
+	//kprintf("@@@@@@\n");
+	/*clean pid_info*/
+	//proc_destroy should not do anything with pid_info
+	//this should be done via exit or waitpid
 
 	kfree(proc->p_name);
 	kfree(proc);
+
+
 }
 
 /*
@@ -228,6 +270,24 @@ proc_create_runprogram(const char *name)
 
 	proc_init(newproc);
 
+
+	struct pid_info* pi =(struct pid_info*)kmalloc(sizeof(struct pid_info));
+	pid_t pid=PID_MIN+1;;
+    //get_pid(&pidtable,&pid);
+	bitmap_mark(pidtable.bitmap,PID_MIN+1);
+	pi->pid=pid;
+	pi->parent_pid=PID_MIN;
+	pi->proc_exited=0;
+	pi->waited=0;
+	pi->pid_lock=lock_create("l");
+	pi->pid_cv=cv_create("cv");
+	pi->child_pid_info=array_create();
+	newproc->pi=pi;
+	add_pid(&pidtable,pi);
+
+	lock_acquire(kproc->pi->pid_lock);
+    array_add(kproc->pi->child_pid_info,pi,NULL);
+    lock_release(kproc->pi->pid_lock);
 	return newproc;
 }
 
@@ -412,4 +472,26 @@ struct fd_entry* get(struct array* arr, int fd,int* i){
 		}
 	}
 	return NULL;
+}
+
+void fd_array_copy(struct proc* srcproc, struct proc* dstproc){
+	//struct array* arr=array_create();
+	//if(array==NULL) return NULL;
+	lock_acquire(srcproc->array_lock);
+	lock_acquire(dstproc->array_lock);
+	for(unsigned index=0;index<array_num(srcproc->fd_array);++index){
+		struct fd_entry* fe1=(struct fd_entry*)array_get(srcproc->fd_array,index);
+		struct fd_entry* fe2=(struct fd_entry*)kmalloc(sizeof(struct fd_entry));
+		KASSERT(fe2!=NULL);
+		lock_acquire(fe1->f->l);
+		KASSERT(fe1->f->refcount>0&&fe1->f->valid);
+		++(fe1->f->refcount);
+		VOP_INCREF(fe1->f->vn);
+		fe2->fd=fe1->fd;
+		fe2->f=fe1->f;
+		lock_release(fe1->f->l);
+		array_add(dstproc->fd_array,fe2,NULL);
+	}
+	lock_release(dstproc->array_lock);
+	lock_release(srcproc->array_lock);
 }

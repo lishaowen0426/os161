@@ -72,6 +72,7 @@ lseek_file_stdin(void)
 
 	/* fork so we don't affect our own stdin */
 	pid = fork();
+	//printf("after fork\n");
 	if (pid<0) {
 		warn("UH-OH: fork failed");
 		return;
@@ -79,6 +80,7 @@ lseek_file_stdin(void)
 	else if (pid!=0) {
 		/* parent */
 		rv = waitpid(pid, &status, 0);
+		printf("after waitpid\n");
 		if (rv<0) {
 			warn("UH-OH: waitpid failed");
 		}
@@ -94,7 +96,6 @@ lseek_file_stdin(void)
 	}
 
 	/* child */
-
 	fd = open_testfile(NULL);
 	if (fd<0) {
 		_exit(0);

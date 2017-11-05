@@ -7,7 +7,8 @@ dumbvm.o: ../../arch/mips/vm/dumbvm.c ../../include/types.h \
  ../../include/thread.h ../../include/array.h ../../include/threadlist.h \
  includelinks/machine/thread.h ../../include/setjmp.h \
  includelinks/kern/machine/setjmp.h ../../include/filetable.h \
- ../../include/vnode.h ../../include/synch.h ../../include/current.h \
+ ../../include/vnode.h ../../include/synch.h ../../include/pid.h \
+ ../../include/bitmap.h ../../include/current.h \
  includelinks/machine/current.h includelinks/mips/tlb.h \
  ../../include/addrspace.h ../../include/vm.h includelinks/machine/vm.h \
  opt-dumbvm.h

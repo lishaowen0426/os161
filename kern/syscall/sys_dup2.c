@@ -9,7 +9,6 @@
 #include <limits.h>
 int sys_dup2(int oldfd, int newfd,int32_t* retval){
     if(newfd>=OPEN_MAX) return EBADF;
-
     lock_acquire(curproc->array_lock);
     struct fd_entry* fe=get(curproc->fd_array,oldfd,NULL);
     if(fe==NULL||newfd<0){
@@ -24,7 +23,9 @@ int sys_dup2(int oldfd, int newfd,int32_t* retval){
     }
 
     if(get(curproc->fd_array,newfd,NULL)!=NULL){
+        lock_release(curproc->array_lock);
         sys_close(newfd);
+        lock_acquire(curproc->array_lock);
     }
 
     if(array_num(curproc->fd_array)>=OPEN_MAX){
@@ -38,6 +39,7 @@ int sys_dup2(int oldfd, int newfd,int32_t* retval){
     new_fdentry->fd=newfd;
     new_fdentry->f=fe->f;
     ++((fe->f)->refcount);
+    VOP_INCREF(fe->f->vn);
     array_add(curproc->fd_array,new_fdentry,NULL);
     *retval=newfd;
     lock_release(curproc->array_lock);

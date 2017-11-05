@@ -51,7 +51,8 @@
 #include <version.h>
 #include "autoconf.h"  // for pseudoconfig
 #include <filetable.h>
-
+#include <pid.h>
+#include <limits.h>
 /*
  * These two pieces of data are maintained by the makefiles and build system.
  * buildconfig is the name of the config file the kernel was configured with.
@@ -64,6 +65,7 @@
 extern const int buildversion;
 extern const char buildconfig[];
 struct filetable filetable;
+struct pid_table pidtable;
 /*
  * Copyright message for the OS/161 base code.
  */
@@ -210,7 +212,22 @@ kmain(char *arguments)
 {
 	boot();
 	filetable_init(&filetable);
+	pid_table_create(&pidtable);
 	proc_init(kproc);
+	/*ker pid*/
+	struct pid_info* pi=(struct pid_info*)kmalloc(sizeof(struct pid_info));
+	pi->pid=PID_MIN;
+	bitmap_mark(pidtable.bitmap,PID_MIN);
+    pi->parent_pid=-1;
+    pi->proc_exited=0;
+    pi->waited=0;
+    pi->pid_lock=lock_create("l");
+    pi->pid_cv=cv_create("cv");
+    pi->child_pid_info=array_create();
+    kproc->pi=pi;
+    add_pid(&pidtable,pi);
+
+	/**/
 	menu(arguments);
 
 	/* Should not get here */

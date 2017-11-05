@@ -40,6 +40,7 @@
 #include <thread.h> /* required for struct threadarray */
 #include <array.h>
 #include <filetable.h>
+#include <pid.h>
 
 struct addrspace;
 struct vnode;
@@ -65,6 +66,7 @@ struct proc {
 	/* add more material here as needed */
 	struct array* fd_array;
 	struct lock* array_lock;
+	struct pid_info* pi;
 };
 
 /* This is the process structure for the kernel and for kernel-only threads. */
@@ -94,5 +96,8 @@ struct addrspace *proc_setas(struct addrspace *);
 void proc_init(struct proc* proc);
 
 struct fd_entry* get(struct array* arr, int fd, int* index);
+
+void fd_array_copy(struct proc* srcproc,struct proc* dstproc);
+
 
 #endif /* _PROC_H_ */

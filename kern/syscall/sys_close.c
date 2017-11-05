@@ -11,7 +11,10 @@
 #include <kern/errno.h>
 
 int sys_close (int fd){
+
+    KASSERT(curproc!=NULL);
     lock_acquire(curproc->array_lock);
+
     int index=-1;
     struct fd_entry* fe=get(curproc->fd_array,fd,&index);
     if(fe==NULL){
@@ -22,7 +25,6 @@ int sys_close (int fd){
     struct file* file=fe->f;
     struct vnode* vn=file->vn;
     struct lock* l=file->l;
-
 
     lock_acquire(l);
     KASSERT(file->refcount>=1);
@@ -35,7 +37,7 @@ int sys_close (int fd){
         file->vn=NULL;
         lock_release(l);
         lock_destroy(l);
-
+        kfree(file);
         fe->f=NULL;
         array_remove(curproc->fd_array,index);
         kfree(fe);

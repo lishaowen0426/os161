@@ -8,5 +8,6 @@ sys_dup2.o: ../../syscall/sys_dup2.c ../../include/types.h \
  includelinks/machine/current.h ../../include/thread.h \
  ../../include/threadlist.h includelinks/machine/thread.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
- ../../include/proc.h ../../include/kern/errno.h ../../include/limits.h \
+ ../../include/proc.h ../../include/pid.h ../../include/bitmap.h \
+ ../../include/kern/errno.h ../../include/limits.h \
  ../../include/kern/limits.h

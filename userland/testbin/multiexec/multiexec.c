@@ -150,12 +150,15 @@ spawn(int njobs)
 			/* child */
 			semopen(&s1);
 			semopen(&s2);
-			semV(&s1, 1);
+			//semV(&s1, 1);
+			printf("before child sem p\n");
 			semP(&s2, 1);
+			printf("after child sem p\n");
 			semclose(&s1);
 			semclose(&s2);
-			execv(subargv[0], subargv);
-			warn("execv");
+			printf("close child\n");
+			//execv(subargv[0], subargv);
+			//warn("execv");
 			_exit(1);
 		}
 	}
@@ -163,7 +166,9 @@ spawn(int njobs)
 	semopen(&s1);
 	semopen(&s2);
 	printf("Waiting for fork...\n");
+	printf("before semp\n");
 	semP(&s1, njobs);
+	printf("after semp\n");
 	printf("Starting the execs...\n");
 	semV(&s2, njobs);
 

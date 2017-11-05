@@ -1,4 +1,4 @@
-cscope 15 $HOME/os161/src/kern/include               0000035228
+cscope 15 $HOME/os161/src/kern/include               0000036456
 	@addrspace.h
 
 30 #i‚de‡
@@ -3343,7 +3343,7 @@ __PATH_MAX
 
 	)
 
-43 
+44 
 	#ARG_MAX
  
 __ARG_MAX
@@ -3351,7 +3351,7 @@ __ARG_MAX
 
 	)
 
-44 
+45 
 	#PID_MIN
  
 __PID_MIN
@@ -3359,7 +3359,7 @@ __PID_MIN
 
 	)
 
-45 
+46 
 	#PID_MAX
  
 __PID_MAX
@@ -3367,7 +3367,7 @@ __PID_MAX
 
 	)
 
-46 
+47 
 	#PIPE_BUF
  
 __PIPE_BUF
@@ -3375,7 +3375,7 @@ __PIPE_BUF
 
 	)
 
-47 
+48 
 	#NGROUPS_MAX
  
 __NGROUPS_MAX
@@ -3383,7 +3383,7 @@ __NGROUPS_MAX
 
 	)
 
-48 
+49 
 	#LOGIN_NAME_MAX
  
 __LOGIN_NAME_MAX
@@ -3391,7 +3391,7 @@ __LOGIN_NAME_MAX
 
 	)
 
-49 
+50 
 	#OPEN_MAX
  
 __OPEN_MAX
@@ -3399,7 +3399,7 @@ __OPEN_MAX
 
 	)
 
-50 
+51 
 	#IOV_MAX
  
 __IOV_MAX
@@ -3529,6 +3529,166 @@ memb¨_™y_™y
 	~<machöe/memb¨.h
 >
 
+	@pid.h
+
+1 #i‚de‡
+_PID_H_
+
+
+2 
+	#_PID_H_
+
+
+	)
+
+3 
+	~<ty≥s.h
+>
+
+4 
+	~<¨øy.h
+>
+
+5 
+	~<bôm≠.h
+>
+
+6 
+	~<synch.h
+>
+
+8 
+	spid_öfo
+{
+
+9 
+pid_t
+ 
+	mpid
+;
+
+10 
+pid_t
+ 
+	m∑ª¡_pid
+;
+
+11 
+	m¥oc_exôed
+;
+
+12 
+	mexô_code
+;
+
+13 
+	mwaôed
+;
+
+14 
+¨øy
+* 
+	mchûd_pid_öfo
+;
+
+15 
+lock
+* 
+	mpid_lock
+;
+
+16 
+cv
+* 
+	mpid_cv
+;
+
+20 
+	spid_èbÀ
+{
+
+21 
+¨øy
+* 
+	m¨r
+;
+
+22 
+bôm≠
+* 
+	mbôm≠
+;
+
+23 
+lock
+* 
+	mlock
+;
+
+26 
+pid_èbÀ_¸óã
+(
+pid_èbÀ
+* 
+±
+);
+
+31 
+gë_pid
+(
+pid_èbÀ
+* 
+±
+,
+pid_t
+* 
+pid
+);
+
+34 
+add_pid
+(
+pid_èbÀ
+* 
+±
+, 
+pid_öfo
+* 
+pi
+);
+
+36 
+pid_öfo
+* 
+gë_¥oc
+(
+pid_èbÀ
+* 
+±
+, 
+pid_t
+ 
+pid
+);
+
+41 
+˛ór_pid
+ (
+pid_èbÀ
+* 
+±
+, 
+pid_öfo
+* 
+pi
+);
+
+44 
+pid_èbÀ
+ 
+pidèbÀ
+;
+
 	@proc.h
 
 30 #i‚de‡
@@ -3557,83 +3717,93 @@ _PROC_H_
 	~<fûëabÀ.h
 >
 
-44 
+43 
+	~<pid.h
+>
+
+45 
 	gaddr•a˚
 ;
 
-45 
+46 
 	gvnode
 ;
 
-50 
+51 
 	sfd_íåy
 {
 
-51 
+52 
 	mfd
 ;
 
-52 
+53 
 fûe
 * 
 	mf
 ;
 
-54 
+55 
 	s¥oc
  {
 
-55 *
+56 *
 	mp_«me
 ;
 
-56 
+57 
 •ölock
  
 	mp_lock
 ;
 
-57 
+58 
 thªad¨øy
  
 	mp_thªads
 ;
 
-60 
+61 
 addr•a˚
  *
 	mp_addr•a˚
 ;
 
-63 
+64 
 vnode
  *
 	mp_cwd
 ;
 
-66 
+67 
 ¨øy
 * 
 	mfd_¨øy
 ;
 
-67 
+68 
 lock
 * 
 	m¨øy_lock
 ;
 
-71 
+69 
+pid_öfo
+* 
+	mpi
+;
+
+73 
 ¥oc
  *
 k¥oc
 ;
 
-74 
+76 
 ¥oc_boŸ°øp
 ();
 
-77 
+79 
 ¥oc
  *
 ¥oc_¸óã_ru≈rogøm
@@ -3641,13 +3811,13 @@ k¥oc
 «me
 );
 
-80 
+82 
 ¥oc_de°roy
 (
 ¥oc
  *proc);
 
-83 
+85 
 ¥oc_addthªad
 (
 ¥oc
@@ -3657,7 +3827,7 @@ thªad
 t
 );
 
-86 
+88 
 ¥oc_ªmthªad
 (
 thªad
@@ -3665,25 +3835,25 @@ thªad
 t
 );
 
-89 
+91 
 addr•a˚
  *
 ¥oc_gëas
 ();
 
-92 
+94 
 addr•a˚
  *
 ¥oc_£ès
 (addrspace *);
 
-94 
+96 
 ¥oc_öô
 (
 ¥oc
 *Öroc);
 
-96 
+98 
 fd_íåy
 * 
 gë
@@ -3695,6 +3865,16 @@ gë
 fd
 , * 
 ödex
+);
+
+100 
+fd_¨øy_c›y
+(
+¥oc
+* 
+§˝roc
+,¥oc* 
+d°¥oc
 );
 
 	@setjmp.h
@@ -4507,10 +4687,10 @@ tf
 
 48 
 íãr_f‹ked_¥o˚ss
-(
-å≠‰ame
- *
+(*
 tf
+,
+nŸu£d
 );
 
 51 
@@ -4629,6 +4809,104 @@ sys_dup2
 öt32_t
 * 
 ªtvÆ
+);
+
+72 
+sys___gëcwd
+(*
+buf
+, 
+size_t
+ 
+buÊí
+, 
+öt32_t
+* 
+ªtvÆ
+);
+
+73 
+sys_chdú
+(c⁄° *
+∑th«me
+, 
+öt32_t
+* 
+ªtvÆ
+);
+
+74 
+sys_f‹k
+(
+å≠‰ame
+* 
+tf
+,(*
+íåypoöt
+)(*
+d©a1
+, 
+d©a2
+),
+öt32_t
+* 
+ªtvÆ
+);
+
+75 
+	`sys_gëpid
+(
+öt32_t
+* 
+ªtvÆ
+);
+
+76 
+	`sys__exô
+(
+öt32_t
+ 
+exô_code
+);
+
+77 
+	`sys_waôpid
+(
+pid_t
+ 
+pid
+,* 
+°©us
+,
+›ti⁄s
+,
+öt32_t
+* 
+ªtvÆ
+);
+
+78 
+	`sys_execv
+(c⁄° * 
+¥ogøm
+,** 
+¨gs
+);
+
+80 
+	`kwaôpid
+(
+pid_t
+ 
+pid
+);
+
+81 
+	`kexô
+(
+öt32_t
+ 
+exô_code
 );
 
 	@test.h
@@ -7295,8 +7573,8 @@ lk
 1
 .
 0
-39
-334
+40
+340
 addrspace.h
 array.h
 bitmap.h
@@ -7315,6 +7593,7 @@ lib.h
 limits.h
 mainbus.h
 membar.h
+pid.h
 proc.h
 setjmp.h
 sfs.h

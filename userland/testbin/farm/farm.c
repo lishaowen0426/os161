@@ -90,6 +90,7 @@ hog(void)
 	spawnv("/testbin/hog", hargv);
 }
 
+
 static
 void
 cat(void)

@@ -9,6 +9,7 @@ sys_read.o: ../../syscall/sys_read.c ../../include/types.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
  ../../include/limits.h ../../include/kern/limits.h ../../include/vnode.h \
  ../../include/vfs.h ../../include/filetable.h ../../include/synch.h \
- ../../include/proc.h ../../include/kern/errno.h ../../include/uio.h \
+ ../../include/proc.h ../../include/pid.h ../../include/bitmap.h \
+ ../../include/kern/errno.h ../../include/uio.h \
  ../../include/kern/iovec.h ../../include/kern/fcntl.h \
  ../../include/copyinout.h

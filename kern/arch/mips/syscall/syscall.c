@@ -154,6 +154,25 @@ syscall(struct trapframe *tf)
 		err = sys_chdir((const char *) tf->tf_a0, (int32_t *)&retval);
         break;
 
+	    case SYS_fork:
+		err=sys_fork(tf,enter_forked_process,(int32_t*)&retval);
+		break;
+
+	    case  SYS_getpid:
+		err=sys_getpid((int32_t*)&retval);
+		break;
+
+	    case SYS__exit:
+		sys__exit((int32_t)tf->tf_a0);
+		break;
+
+	    case SYS_waitpid:
+		err=sys_waitpid((pid_t)tf->tf_a0,(int*)tf->tf_a1,(int)tf->tf_a2,(int32_t*)&retval);
+		break;
+
+	    case SYS_execv:
+			err=sys_execv((const char*)tf->tf_a0,(char**) tf->tf_a1);
+			break;
 	    default:
 		kprintf("Unknown syscall %d\n", callno);
 		err = ENOSYS;
@@ -198,7 +217,20 @@ syscall(struct trapframe *tf)
  * Thus, you can trash it and do things another way if you prefer.
  */
 void
-enter_forked_process(struct trapframe *tf)
+enter_forked_process(void *tf,unsigned long notused)
 {
-	(void)tf;
+	(void) notused;
+	/*
+	((struct trapframe*)tf)->tf_v0=0;
+	((struct trapframe*)tf)->tf_a3=0;
+	((struct trapframe*)tf)->tf_epc+=4;
+	*/
+	struct trapframe own_tf;
+	memmove(&own_tf,tf,sizeof(struct trapframe));
+	own_tf.tf_v0=0;
+	own_tf.tf_a3=0;
+	own_tf.tf_epc+=4;
+	kfree(tf);
+	//call mips_usermode?
+	mips_usermode(&own_tf);
 }

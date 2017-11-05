@@ -39,7 +39,7 @@
 #include <vm.h>
 #include <mainbus.h>
 #include <syscall.h>
-
+#include <copyinout.h>
 
 /* in exception-*.S */
 extern __DEAD void asm_usermode(struct trapframe *tf);
@@ -114,7 +114,8 @@ kill_curthread(vaddr_t epc, unsigned code, vaddr_t vaddr)
 
 	kprintf("Fatal user mode trap %u sig %d (%s, epc 0x%x, vaddr 0x%x)\n",
 		code, sig, trapcodenames[code], epc, vaddr);
-	panic("I don't know how to handle this\n");
+	kexit(sig);
+	//panic("I don't know how to handle this\n");
 }
 
 /*
@@ -423,6 +424,15 @@ void
 enter_new_process(int argc, userptr_t argv, userptr_t env,
 		  vaddr_t stack, vaddr_t entry)
 {
+	/*
+	char ** kaddr= (char**) kmalloc(sizeof(void*));
+	int err=copyin((userptr_t)(argv+sizeof(void*)),kaddr,sizeof(void*));
+    if(err){
+
+        kprintf("err!!!\n");
+    }
+    kprintf("kaddr is %x\n",(int)*kaddr);
+	*/
 	struct trapframe tf;
 
 	bzero(&tf, sizeof(tf));
@@ -433,6 +443,5 @@ enter_new_process(int argc, userptr_t argv, userptr_t env,
 	tf.tf_a1 = (vaddr_t)argv;
 	tf.tf_a2 = (vaddr_t)env;
 	tf.tf_sp = stack;
-
 	mips_usermode(&tf);
 }

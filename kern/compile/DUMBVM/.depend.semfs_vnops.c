@@ -10,5 +10,6 @@ semfs_vnops.o: ../../fs/semfs/semfs_vnops.c ../../include/types.h \
  ../../include/threadlist.h includelinks/machine/thread.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
  ../../include/proc.h ../../include/filetable.h ../../include/vnode.h \
- ../../include/current.h includelinks/machine/current.h \
- ../../include/vfs.h ../../fs/semfs/semfs.h ../../include/fs.h
+ ../../include/pid.h ../../include/bitmap.h ../../include/current.h \
+ includelinks/machine/current.h ../../include/vfs.h \
+ ../../fs/semfs/semfs.h ../../include/fs.h

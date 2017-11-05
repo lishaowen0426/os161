@@ -213,9 +213,9 @@ lock_acquire(struct lock *lock)
         spinlock_acquire(&lock->lk_slock);
         
         //check for deadlock	    
-        if(lock->lk_holder == curthread->t_name){
-             panic("Deadlock on lock %p\n", lock);
-        }	    
+         if(lock->lk_holder == curthread->t_name){
+            panic("Deadlock on lock %p\n", lock);
+        }
         	    
         //check if someone holds the lock already
         //put the thread to sleep and wait	    
@@ -355,13 +355,11 @@ cv_wait(struct cv *cv, struct lock *lock)
         //check if cv and lock exist
         KASSERT(cv != NULL);
         KASSERT(lock != NULL);
-        
         //make sure current thread holds the lock
         KASSERT(lock_do_i_hold(lock));
         
         //release the lock and make the current thread goes to sleep in atomic operation
         spinlock_acquire(&cv->cv_slock);
-        
         lock_release(lock);
         wchan_sleep(cv->cv_wchan, &cv->cv_slock);
         
@@ -371,7 +369,6 @@ cv_wait(struct cv *cv, struct lock *lock)
         
         //the thread is waken, grab the lock again
         lock_acquire(lock);
-        
         //check if the lock is acquired successfully
         KASSERT(lock_do_i_hold(lock));
         

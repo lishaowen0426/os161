@@ -78,8 +78,9 @@ cmd_progthread(void *ptr, unsigned long nargs)
 	char progname[128];
 	int result;
 
+	//kprintf("in cmd_progthread\n");
+	//kprintf("nargs is : %ld\n",nargs);
 	KASSERT(nargs >= 1);
-
 	if (nargs > 2) {
 		kprintf("Warning: argument passing from menu not supported\n");
 	}
@@ -88,13 +89,25 @@ cmd_progthread(void *ptr, unsigned long nargs)
 	KASSERT(strlen(args[0]) < sizeof(progname));
 
 	strcpy(progname, args[0]);
-
-	result = runprogram(progname);
-	if (result) {
-		kprintf("Running program %s failed: %s\n", args[0],
-			strerror(result));
-		return;
+	/*
+	if(nargs>1){
+		args++;
+		result=sys_execv(progname,args);
+		if (result) {
+			kprintf("Running program %s failed: %s\n", args[0],
+					strerror(result));
+			return;
+		}
 	}
+	*/
+	//else{
+		result = runprogram(progname);
+		if (result) {
+			kprintf("Running program %s failed: %s\n", args[0],
+			strerror(result));
+			return;
+		}
+		//}
 
 	/* NOTREACHED: runprogram only returns on error. */
 }
@@ -144,7 +157,12 @@ common_prog(int nargs, char **args)
 	 * The new process will be destroyed when the program exits...
 	 * once you write the code for handling that.
 	 */
-
+	/*
+	int retval;
+	int status=5;
+	sys_waitpid(PID_MIN+1,&status,0,&retval);
+	*/
+	kwaitpid(PID_MIN+1);
 	return 0;
 }
 
@@ -624,7 +642,6 @@ cmd_dispatch(char *cmd)
 	for (word = strtok_r(cmd, " \t", &context);
 	     word != NULL;
 	     word = strtok_r(NULL, " \t", &context)) {
-
 		if (nargs >= MAXMENUARGS) {
 			kprintf("Command line has too many words\n");
 			return E2BIG;
@@ -681,7 +698,6 @@ menu_execute(char *line, int isargs)
 		if (isargs) {
 			kprintf("OS/161 kernel: %s\n", command);
 		}
-
 		result = cmd_dispatch(command);
 		if (result) {
 			kprintf("Menu command failed: %s\n", strerror(result));
@@ -714,11 +730,13 @@ menu(char *args)
 {
 	char buf[64];
 
+
 	menu_execute(args, 1);
 
 	while (1) {
 		kprintf("OS/161 kernel [? for menu]: ");
 		kgets(buf, sizeof(buf));
+
 		menu_execute(buf, 0);
 	}
 }

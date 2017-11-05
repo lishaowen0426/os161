@@ -9,5 +9,5 @@ sys_write.o: ../../syscall/sys_write.c ../../include/types.h \
  ../../include/threadlist.h includelinks/machine/thread.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
  ../../include/filetable.h ../../include/synch.h ../../include/proc.h \
- ../../include/kern/errno.h ../../include/kern/fcntl.h \
- ../../include/copyinout.h
+ ../../include/pid.h ../../include/bitmap.h ../../include/kern/errno.h \
+ ../../include/kern/fcntl.h ../../include/copyinout.h

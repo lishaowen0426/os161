@@ -460,3 +460,9 @@ file        syscall/sys_lseek.c
 file        syscall/sys_dup2.c
 file        syscall/sys_chdir.c
 file        syscall/sys___getcwd.c
+file        syscall/sys_fork.c
+file        syscall/sys_getpid.c
+file        pidtable/pid.c
+file        syscall/sys__exit.c
+file        syscall/sys_waitpid.c
+file        syscall/sys_execv.c

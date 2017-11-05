@@ -42,9 +42,9 @@ main(int argc, char *argv[])
 {
 	const char *tmp;
 	int i;
-
-	printf("argc: %d\n", argc);
-
+	//char* p=(char*)0x7fffffeb;
+	//printf("c: %c\n",*p);
+	//printf("argv: %s\n",argv[1]);
 	for (i=0; i<=argc; i++) {
 		tmp = argv[i];
 		if (tmp==NULL) {

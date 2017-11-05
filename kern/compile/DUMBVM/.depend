@@ -251,8 +251,9 @@ semfs_vnops.o: ../../fs/semfs/semfs_vnops.c ../../include/types.h \
  ../../include/threadlist.h includelinks/machine/thread.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
  ../../include/proc.h ../../include/filetable.h ../../include/vnode.h \
- ../../include/current.h includelinks/machine/current.h \
- ../../include/vfs.h ../../fs/semfs/semfs.h ../../include/fs.h
+ ../../include/pid.h ../../include/bitmap.h ../../include/current.h \
+ includelinks/machine/current.h ../../include/vfs.h \
+ ../../fs/semfs/semfs.h ../../include/fs.h
 sfs_balloc.o: ../../fs/sfs/sfs_balloc.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
  includelinks/machine/types.h ../../include/lib.h ../../include/cdefs.h \
@@ -358,7 +359,8 @@ uio.o: ../../lib/uio.c ../../include/types.h ../../include/kern/types.h \
  ../../include/thread.h ../../include/array.h ../../include/threadlist.h \
  includelinks/machine/thread.h ../../include/setjmp.h \
  includelinks/kern/machine/setjmp.h ../../include/filetable.h \
- ../../include/vnode.h ../../include/synch.h ../../include/current.h \
+ ../../include/vnode.h ../../include/synch.h ../../include/pid.h \
+ ../../include/bitmap.h ../../include/current.h \
  includelinks/machine/current.h ../../include/copyinout.h
 main.o: ../../main/main.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
@@ -371,11 +373,12 @@ main.o: ../../main/main.c ../../include/types.h \
  ../../include/threadlist.h includelinks/machine/thread.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
  ../../include/proc.h ../../include/filetable.h ../../include/vnode.h \
- ../../include/synch.h ../../include/current.h \
- includelinks/machine/current.h ../../include/vm.h \
- includelinks/machine/vm.h ../../include/mainbus.h ../../include/vfs.h \
- ../../include/device.h ../../include/syscall.h ../../include/test.h \
- ../../include/version.h autoconf.h
+ ../../include/synch.h ../../include/pid.h ../../include/bitmap.h \
+ ../../include/current.h includelinks/machine/current.h \
+ ../../include/vm.h includelinks/machine/vm.h ../../include/mainbus.h \
+ ../../include/vfs.h ../../include/device.h ../../include/syscall.h \
+ ../../include/test.h ../../include/version.h autoconf.h \
+ ../../include/limits.h ../../include/kern/limits.h
 menu.o: ../../main/menu.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
  includelinks/machine/types.h ../../include/kern/errno.h \
@@ -389,9 +392,16 @@ menu.o: ../../main/menu.c ../../include/types.h \
  includelinks/machine/thread.h ../../include/setjmp.h \
  includelinks/kern/machine/setjmp.h ../../include/proc.h \
  ../../include/filetable.h ../../include/vnode.h ../../include/synch.h \
- ../../include/vfs.h ../../include/sfs.h ../../include/fs.h \
- ../../include/kern/sfs.h ../../include/syscall.h ../../include/test.h \
- opt-sfs.h opt-net.h
+ ../../include/pid.h ../../include/bitmap.h ../../include/vfs.h \
+ ../../include/sfs.h ../../include/fs.h ../../include/kern/sfs.h \
+ ../../include/syscall.h ../../include/test.h opt-sfs.h opt-net.h
+pid.o: ../../pidtable/pid.c ../../include/pid.h ../../include/types.h \
+ ../../include/kern/types.h includelinks/kern/machine/types.h \
+ includelinks/machine/types.h ../../include/array.h ../../include/cdefs.h \
+ ../../include/lib.h opt-noasserts.h ../../include/bitmap.h \
+ ../../include/synch.h ../../include/spinlock.h \
+ includelinks/machine/spinlock.h ../../include/limits.h \
+ ../../include/kern/limits.h
 proc.o: ../../proc/proc.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
  includelinks/machine/types.h ../../include/spl.h ../../include/cdefs.h \
@@ -401,9 +411,10 @@ proc.o: ../../proc/proc.c ../../include/types.h \
  ../../include/threadlist.h includelinks/machine/thread.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
  ../../include/filetable.h ../../include/vnode.h ../../include/synch.h \
- ../../include/current.h includelinks/machine/current.h \
- ../../include/addrspace.h ../../include/vm.h includelinks/machine/vm.h \
- opt-dumbvm.h ../../include/limits.h ../../include/kern/limits.h \
+ ../../include/pid.h ../../include/bitmap.h ../../include/current.h \
+ includelinks/machine/current.h ../../include/addrspace.h \
+ ../../include/vm.h includelinks/machine/vm.h opt-dumbvm.h \
+ ../../include/limits.h ../../include/kern/limits.h \
  ../../include/kern/fcntl.h ../../include/vfs.h ../../include/syscall.h
 loadelf.o: ../../syscall/loadelf.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
@@ -414,7 +425,8 @@ loadelf.o: ../../syscall/loadelf.c ../../include/types.h \
  ../../include/thread.h ../../include/array.h ../../include/threadlist.h \
  includelinks/machine/thread.h ../../include/setjmp.h \
  includelinks/kern/machine/setjmp.h ../../include/filetable.h \
- ../../include/vnode.h ../../include/synch.h ../../include/current.h \
+ ../../include/vnode.h ../../include/synch.h ../../include/pid.h \
+ ../../include/bitmap.h ../../include/current.h \
  includelinks/machine/current.h ../../include/addrspace.h \
  ../../include/vm.h includelinks/machine/vm.h opt-dumbvm.h \
  ../../include/elf.h includelinks/machine/elf.h
@@ -427,7 +439,8 @@ runprogram.o: ../../syscall/runprogram.c ../../include/types.h \
  ../../include/array.h ../../include/threadlist.h \
  includelinks/machine/thread.h ../../include/setjmp.h \
  includelinks/kern/machine/setjmp.h ../../include/filetable.h \
- ../../include/vnode.h ../../include/synch.h ../../include/current.h \
+ ../../include/vnode.h ../../include/synch.h ../../include/pid.h \
+ ../../include/bitmap.h ../../include/current.h \
  includelinks/machine/current.h ../../include/addrspace.h \
  ../../include/vm.h includelinks/machine/vm.h opt-dumbvm.h \
  ../../include/vfs.h ../../include/syscall.h ../../include/test.h
@@ -437,6 +450,20 @@ sys___getcwd.o: ../../syscall/sys___getcwd.c ../../include/types.h \
  ../../include/cdefs.h ../../include/uio.h ../../include/kern/iovec.h \
  ../../include/vfs.h ../../include/array.h ../../include/lib.h \
  opt-noasserts.h ../../include/kern/errno.h ../../include/copyinout.h
+sys__exit.o: ../../syscall/sys__exit.c ../../include/types.h \
+ ../../include/kern/types.h includelinks/kern/machine/types.h \
+ includelinks/machine/types.h ../../include/syscall.h \
+ ../../include/cdefs.h ../../include/pid.h ../../include/array.h \
+ ../../include/lib.h opt-noasserts.h ../../include/bitmap.h \
+ ../../include/synch.h ../../include/spinlock.h \
+ includelinks/machine/spinlock.h ../../include/proc.h \
+ ../../include/thread.h ../../include/threadlist.h \
+ includelinks/machine/thread.h ../../include/setjmp.h \
+ includelinks/kern/machine/setjmp.h ../../include/filetable.h \
+ ../../include/vnode.h ../../include/current.h \
+ includelinks/machine/current.h ../../include/spl.h \
+ ../../include/addrspace.h ../../include/vm.h includelinks/machine/vm.h \
+ opt-dumbvm.h ../../include/kern/wait.h
 sys_chdir.o: ../../syscall/sys_chdir.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
  includelinks/machine/types.h ../../include/syscall.h \
@@ -454,7 +481,8 @@ sys_close.o: ../../syscall/sys_close.c ../../include/types.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
  ../../include/limits.h ../../include/kern/limits.h ../../include/vnode.h \
  ../../include/vfs.h ../../include/filetable.h ../../include/synch.h \
- ../../include/proc.h ../../include/kern/errno.h
+ ../../include/proc.h ../../include/pid.h ../../include/bitmap.h \
+ ../../include/kern/errno.h
 sys_dup2.o: ../../syscall/sys_dup2.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
  includelinks/machine/types.h ../../include/syscall.h \
@@ -465,8 +493,49 @@ sys_dup2.o: ../../syscall/sys_dup2.c ../../include/types.h \
  includelinks/machine/current.h ../../include/thread.h \
  ../../include/threadlist.h includelinks/machine/thread.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
- ../../include/proc.h ../../include/kern/errno.h ../../include/limits.h \
+ ../../include/proc.h ../../include/pid.h ../../include/bitmap.h \
+ ../../include/kern/errno.h ../../include/limits.h \
  ../../include/kern/limits.h
+sys_execv.o: ../../syscall/sys_execv.c ../../include/types.h \
+ ../../include/kern/types.h includelinks/kern/machine/types.h \
+ includelinks/machine/types.h ../../include/kern/errno.h \
+ ../../include/limits.h ../../include/kern/limits.h \
+ ../../include/current.h includelinks/machine/current.h \
+ ../../include/thread.h ../../include/array.h ../../include/cdefs.h \
+ ../../include/lib.h opt-noasserts.h ../../include/spinlock.h \
+ includelinks/machine/spinlock.h ../../include/threadlist.h \
+ includelinks/machine/thread.h ../../include/setjmp.h \
+ includelinks/kern/machine/setjmp.h ../../include/addrspace.h \
+ ../../include/vm.h includelinks/machine/vm.h opt-dumbvm.h \
+ ../../include/copyinout.h ../../include/syscall.h ../../include/vfs.h \
+ ../../include/kern/fcntl.h ../../include/vnode.h ../../include/proc.h \
+ ../../include/filetable.h ../../include/synch.h ../../include/pid.h \
+ ../../include/bitmap.h
+sys_fork.o: ../../syscall/sys_fork.c ../../include/types.h \
+ ../../include/kern/types.h includelinks/kern/machine/types.h \
+ includelinks/machine/types.h ../../include/spl.h ../../include/cdefs.h \
+ ../../include/lib.h opt-noasserts.h ../../include/kern/errno.h \
+ ../../include/addrspace.h ../../include/vm.h includelinks/machine/vm.h \
+ opt-dumbvm.h ../../include/current.h includelinks/machine/current.h \
+ ../../include/thread.h ../../include/array.h ../../include/spinlock.h \
+ includelinks/machine/spinlock.h ../../include/threadlist.h \
+ includelinks/machine/thread.h ../../include/setjmp.h \
+ includelinks/kern/machine/setjmp.h ../../include/proc.h \
+ ../../include/filetable.h ../../include/vnode.h ../../include/synch.h \
+ ../../include/pid.h ../../include/bitmap.h includelinks/mips/trapframe.h \
+ ../../include/limits.h ../../include/kern/limits.h \
+ ../../include/syscall.h
+sys_getpid.o: ../../syscall/sys_getpid.c ../../include/types.h \
+ ../../include/kern/types.h includelinks/kern/machine/types.h \
+ includelinks/machine/types.h ../../include/current.h \
+ includelinks/machine/current.h ../../include/thread.h \
+ ../../include/array.h ../../include/cdefs.h ../../include/lib.h \
+ opt-noasserts.h ../../include/spinlock.h includelinks/machine/spinlock.h \
+ ../../include/threadlist.h includelinks/machine/thread.h \
+ ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
+ ../../include/syscall.h ../../include/pid.h ../../include/bitmap.h \
+ ../../include/synch.h ../../include/proc.h ../../include/filetable.h \
+ ../../include/vnode.h
 sys_lseek.o: ../../syscall/sys_lseek.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
  includelinks/machine/types.h ../../include/syscall.h \
@@ -477,7 +546,8 @@ sys_lseek.o: ../../syscall/sys_lseek.c ../../include/types.h \
  ../../include/threadlist.h includelinks/machine/thread.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
  ../../include/filetable.h ../../include/vnode.h ../../include/synch.h \
- ../../include/proc.h ../../include/kern/seek.h ../../include/kern/stat.h \
+ ../../include/proc.h ../../include/pid.h ../../include/bitmap.h \
+ ../../include/kern/seek.h ../../include/kern/stat.h \
  ../../include/kern/errno.h ../../include/kern/stattypes.h
 sys_open.o: ../../syscall/sys_open.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
@@ -490,9 +560,9 @@ sys_open.o: ../../syscall/sys_open.c ../../include/types.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
  ../../include/limits.h ../../include/kern/limits.h ../../include/vnode.h \
  ../../include/vfs.h ../../include/filetable.h ../../include/synch.h \
- ../../include/proc.h ../../include/kern/errno.h \
- ../../include/kern/stat.h ../../include/kern/fcntl.h \
- ../../include/copyinout.h
+ ../../include/proc.h ../../include/pid.h ../../include/bitmap.h \
+ ../../include/kern/errno.h ../../include/kern/stat.h \
+ ../../include/kern/fcntl.h ../../include/copyinout.h
 sys_read.o: ../../syscall/sys_read.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
  includelinks/machine/types.h ../../include/syscall.h \
@@ -504,8 +574,21 @@ sys_read.o: ../../syscall/sys_read.c ../../include/types.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
  ../../include/limits.h ../../include/kern/limits.h ../../include/vnode.h \
  ../../include/vfs.h ../../include/filetable.h ../../include/synch.h \
- ../../include/proc.h ../../include/kern/errno.h ../../include/uio.h \
+ ../../include/proc.h ../../include/pid.h ../../include/bitmap.h \
+ ../../include/kern/errno.h ../../include/uio.h \
  ../../include/kern/iovec.h ../../include/kern/fcntl.h \
+ ../../include/copyinout.h
+sys_waitpid.o: ../../syscall/sys_waitpid.c ../../include/types.h \
+ ../../include/kern/types.h includelinks/kern/machine/types.h \
+ includelinks/machine/types.h ../../include/current.h \
+ includelinks/machine/current.h ../../include/thread.h \
+ ../../include/array.h ../../include/cdefs.h ../../include/lib.h \
+ opt-noasserts.h ../../include/spinlock.h includelinks/machine/spinlock.h \
+ ../../include/threadlist.h includelinks/machine/thread.h \
+ ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
+ ../../include/proc.h ../../include/filetable.h ../../include/vnode.h \
+ ../../include/synch.h ../../include/pid.h ../../include/bitmap.h \
+ ../../include/kern/errno.h ../../include/syscall.h \
  ../../include/copyinout.h
 sys_write.o: ../../syscall/sys_write.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
@@ -518,8 +601,8 @@ sys_write.o: ../../syscall/sys_write.c ../../include/types.h \
  ../../include/threadlist.h includelinks/machine/thread.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
  ../../include/filetable.h ../../include/synch.h ../../include/proc.h \
- ../../include/kern/errno.h ../../include/kern/fcntl.h \
- ../../include/copyinout.h
+ ../../include/pid.h ../../include/bitmap.h ../../include/kern/errno.h \
+ ../../include/kern/fcntl.h ../../include/copyinout.h
 time_syscalls.o: ../../syscall/time_syscalls.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
  includelinks/machine/types.h ../../include/clock.h \
@@ -636,9 +719,9 @@ thread.o: ../../thread/thread.c ../../include/types.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
  ../../include/threadprivate.h ../../include/proc.h \
  ../../include/filetable.h ../../include/vnode.h ../../include/synch.h \
- ../../include/current.h includelinks/machine/current.h \
- ../../include/addrspace.h ../../include/vm.h opt-dumbvm.h \
- ../../include/mainbus.h opt-synchprobs.h
+ ../../include/pid.h ../../include/bitmap.h ../../include/current.h \
+ includelinks/machine/current.h ../../include/addrspace.h \
+ ../../include/vm.h opt-dumbvm.h ../../include/mainbus.h opt-synchprobs.h
 threadlist.o: ../../thread/threadlist.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
  includelinks/machine/types.h ../../include/lib.h ../../include/cdefs.h \
@@ -672,7 +755,8 @@ vfscwd.o: ../../vfs/vfscwd.c ../../include/types.h \
  ../../include/array.h ../../include/threadlist.h \
  includelinks/machine/thread.h ../../include/setjmp.h \
  includelinks/kern/machine/setjmp.h ../../include/filetable.h \
- ../../include/vnode.h ../../include/synch.h ../../include/current.h \
+ ../../include/vnode.h ../../include/synch.h ../../include/pid.h \
+ ../../include/bitmap.h ../../include/current.h \
  includelinks/machine/current.h ../../include/vfs.h ../../include/fs.h
 vfsfail.o: ../../vfs/vfsfail.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
@@ -842,7 +926,8 @@ trap.o: ../../arch/mips/locore/trap.c ../../include/types.h \
  ../../include/array.h includelinks/machine/thread.h \
  ../../include/setjmp.h includelinks/kern/machine/setjmp.h \
  ../../include/current.h includelinks/machine/current.h \
- ../../include/vm.h ../../include/mainbus.h ../../include/syscall.h
+ ../../include/vm.h ../../include/mainbus.h ../../include/syscall.h \
+ ../../include/copyinout.h
 syscall.o: ../../arch/mips/syscall/syscall.c ../../include/types.h \
  ../../include/kern/types.h includelinks/kern/machine/types.h \
  includelinks/machine/types.h ../../include/kern/errno.h \
@@ -894,7 +979,8 @@ dumbvm.o: ../../arch/mips/vm/dumbvm.c ../../include/types.h \
  ../../include/thread.h ../../include/array.h ../../include/threadlist.h \
  includelinks/machine/thread.h ../../include/setjmp.h \
  includelinks/kern/machine/setjmp.h ../../include/filetable.h \
- ../../include/vnode.h ../../include/synch.h ../../include/current.h \
+ ../../include/vnode.h ../../include/synch.h ../../include/pid.h \
+ ../../include/bitmap.h ../../include/current.h \
  includelinks/machine/current.h includelinks/mips/tlb.h \
  ../../include/addrspace.h ../../include/vm.h includelinks/machine/vm.h \
  opt-dumbvm.h

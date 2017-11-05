@@ -130,6 +130,7 @@ copycheck(const_userptr_t userptr, size_t len, size_t *stoplen)
 	}
 
 	if (bot >= USERSPACETOP) {
+		kprintf("within kernel\n");
 		/* region is within the kernel */
 		return EFAULT;
 	}
@@ -305,7 +306,7 @@ copyoutstr(const char *src, userptr_t userdest, size_t len, size_t *actual)
 	if (result) {
 		return result;
 	}
-
+	//kprintf("stop length is : %d\n",stoplen);
 	curthread->t_machdep.tm_badfaultfunc = copyfail;
 
 	result = setjmp(curthread->t_machdep.tm_copyjmp);
