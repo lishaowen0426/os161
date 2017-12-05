@@ -17,7 +17,7 @@
 int sys_read (int fd, void *buf, size_t buflen,int32_t* retVal){
 
     if(!buf){
-        return EFAULT;
+        return 0;
     }
 
     //check if buf is a valid pointer

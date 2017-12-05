@@ -18,6 +18,7 @@ int sys_waitpid(pid_t pid,int* status,int options,int32_t* retval){
 
     lock_acquire(info->pid_lock);
     if(info->parent_pid!=-1&&info->parent_pid!=curproc->pi->pid){
+        kprintf("!!!!!!!!!!");
         lock_release(info->pid_lock);
         return ECHILD;
     }

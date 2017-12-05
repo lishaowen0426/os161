@@ -36,7 +36,7 @@
  */
 
 #include <test/triple.h>
-
+#include <stdio.h>
 int
 main(void)
 {

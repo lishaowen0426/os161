@@ -68,6 +68,7 @@ dofork(void)
  * the pid into the data segment and read it back repeatedly, making
  * sure it's correct every time.
  */
+
 static
 void
 check(void)
@@ -77,6 +78,7 @@ check(void)
 	mypid = getpid();
 
 	/* Make sure each fork has its own address space. */
+
 	for (i=0; i<800; i++) {
 		volatile int seenpid;
 		seenpid = mypid;

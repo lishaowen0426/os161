@@ -101,12 +101,12 @@ cmd_progthread(void *ptr, unsigned long nargs)
 	}
 	*/
 	//else{
-		result = runprogram(progname);
-		if (result) {
-			kprintf("Running program %s failed: %s\n", args[0],
-			strerror(result));
-			return;
-		}
+	result = runprogram(progname);
+	if (result) {
+		kprintf("Running program %s failed: %s\n", args[0],
+		strerror(result));
+		return;
+	 }
 		//}
 
 	/* NOTREACHED: runprogram only returns on error. */

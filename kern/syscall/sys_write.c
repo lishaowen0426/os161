@@ -18,7 +18,7 @@ int sys_write (int fd, const void *buf, size_t nbytes,int32_t* retVal){
 
     //
     if(!buf){
-        return EFAULT;
+        return 0;
     }
 
     //check if buf is a valid pointer

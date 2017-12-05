@@ -64,7 +64,6 @@ runprogram(char *progname)
 	if (result) {
 		return result;
 	}
-
 	/* We should be a new process. */
 	KASSERT(proc_getas() == NULL);
 
@@ -74,21 +73,24 @@ runprogram(char *progname)
 		vfs_close(v);
 		return ENOMEM;
 	}
-
+	//as->as_id=curproc->pi->pid;
 	/* Switch to it and activate it. */
 	proc_setas(as);
+	kprintf("before as activate\n");
 	as_activate();
-
+	kprintf("after as activate\n");
 	/* Load the executable. */
+	//kprintf("before load_elf\n");
 	result = load_elf(v, &entrypoint);
+	//kprintf("after load_elf\n");
 	if (result) {
 		/* p_addrspace will go away when curproc is destroyed */
 		vfs_close(v);
 		return result;
 	}
 
-	/* Done with the file now. */
-	vfs_close(v);
+
+	//vfs_close(v);
 
 	/* Define the user stack in the address space */
 	result = as_define_stack(as, &stackptr);
@@ -96,8 +98,8 @@ runprogram(char *progname)
 		/* p_addrspace will go away when curproc is destroyed */
 		return result;
 	}
-
 	/* Warp to user mode. */
+	kprintf("before enter new process\n");
 	enter_new_process(0 /*argc*/, NULL /*userspace addr of argv*/,
 			  NULL /*userspace addr of environment*/,
 			  stackptr, entrypoint);

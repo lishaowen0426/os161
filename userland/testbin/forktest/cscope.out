@@ -1,0 +1,364 @@
+cscope 15 $HOME/os161/src/userland/testbin/forktest               0000001821
+	@forktest.c
+
+39 
+	~<uni°d.h
+>
+
+40 
+	~<°rög.h
+>
+
+41 
+	~<°dlib.h
+>
+
+42 
+	~<°dio.h
+>
+
+43 
+	~<îr.h
+>
+
+49 vﬁ©ûê
+	gmypid
+;
+
+56 
+	$dof‹k
+()
+
+58 
+pid
+;
+
+59 
+pid
+ = 
+	`f‹k
+();
+
+60 i‡(
+pid
+ < 0) {
+
+61 
+	`w¨n
+("fork");
+
+63  
+pid
+;
+
+64 
+	}
+}
+
+73 
+	$check
+()
+
+75 
+i
+;
+
+77 
+mypid
+ = 
+	`gëpid
+();
+
+80 
+i
+=0; i<800; i++) {
+
+81 vﬁ©ûê
+£ípid
+;
+
+82 
+£ípid
+ = 
+mypid
+;
+
+83 i‡(
+£ípid
+ !
+	`gëpid
+()) {
+
+84 
+	`îrx
+(1, "pid mismatch (%d, should be %d) "
+
+86 
+£ípid
+, 
+	`gëpid
+());
+
+89 
+	}
+}
+
+102 
+	$dowaô
+(
+nowaô
+, 
+pid
+)
+
+104 
+x
+;
+
+106 i‡(
+pid
+<0) {
+
+110 i‡(
+pid
+==0) {
+
+112 
+	`exô
+(0);
+
+115 i‡(!
+nowaô
+) {
+
+116 i‡(
+	`waôpid
+(
+pid
+, &
+x
+, 0)<0) {
+
+117 
+	`w¨n
+("waitpid");
+
+119 i‡(
+	`WIFSIGNALED
+(
+x
+)) {
+
+120 
+	`w¨nx
+("pid %d: sig«»%d", 
+pid
+, 
+	`WTERMSIG
+(
+x
+));
+
+122 i‡(
+	`WEXITSTATUS
+(
+x
+) != 0) {
+
+123 
+	`w¨nx
+("pid %d:Éxô %d", 
+pid
+, 
+	`WEXITSTATUS
+(
+x
+));
+
+126 
+	}
+}
+
+133 
+	$ã°
+(
+nowaô
+)
+
+135 
+pid0
+, 
+pid1
+, 
+pid2
+, 
+pid3
+;
+
+144 
+pid0
+ = 
+	`dof‹k
+();
+
+145 
+	`putch¨
+('0');
+
+146 
+	`check
+();
+
+147 
+pid1
+ = 
+	`dof‹k
+();
+
+148 
+	`putch¨
+('1');
+
+149 
+	`check
+();
+
+150 
+pid2
+ = 
+	`dof‹k
+();
+
+151 
+	`putch¨
+('2');
+
+152 
+	`check
+();
+
+153 
+pid3
+ = 
+	`dof‹k
+();
+
+154 
+	`putch¨
+('3');
+
+155 
+	`check
+();
+
+161 
+	`dowaô
+(
+nowaô
+, 
+pid3
+);
+
+162 
+	`dowaô
+(
+nowaô
+, 
+pid2
+);
+
+163 
+	`dowaô
+(
+nowaô
+, 
+pid1
+);
+
+164 
+	`dowaô
+(
+nowaô
+, 
+pid0
+);
+
+166 
+	`putch¨
+('\n');
+
+167 
+	}
+}
+
+170 
+	$maö
+(
+¨gc
+, *
+¨gv
+[])
+
+172 c⁄° 
+ex≥˘ed
+[] =
+
+174 
+nowaô
+=0;
+
+176 i‡(
+¨gc
+==2 && !
+	`°rcmp
+(
+¨gv
+[1], "-w")) {
+
+177 
+nowaô
+=1;
+
+179 i‡(
+¨gc
+!=1 &&árgc!=0) {
+
+180 
+	`w¨nx
+("usage: forktest [-w]");
+
+183 
+	`w¨nx
+("Starting. ExpectÅhis many:");
+
+184 
+	`wrôe
+(
+STDERR_FILENO
+, 
+ex≥˘ed
+, 
+	`°æí
+(expected));
+
+186 
+	`ã°
+(
+nowaô
+);
+
+188 
+	`w¨nx
+("Complete.");
+
+190 
+	}
+}
+
+	@
+1
+.
+0
+1
+11
+forktest.c

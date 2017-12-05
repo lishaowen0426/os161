@@ -77,6 +77,8 @@ void sys__exit(int32_t exit_code);
 int sys_waitpid(pid_t pid,int* status,int options,int32_t* retval);
 int sys_execv(const char* program,char** args);
 
+int sys_sbrk(intptr_t amount, vaddr_t *retval);
+
 int kwaitpid(pid_t pid);
 void kexit(int32_t exit_code);
 #endif /* _SYSCALL_H_ */

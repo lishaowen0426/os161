@@ -41,7 +41,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <stdlib.h>
-
+#include <stdio.h>
 /*
  * For a thread-safe libc, declare a lock for this file and change
  * these to be nonempty.
@@ -249,7 +249,6 @@ srandom_unlocked(unsigned long x)
 void
 srandom(unsigned long x)
 {
-
 	LOCKME();
 	srandom_unlocked(x);
 	UNLOCKME();

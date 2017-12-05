@@ -4,6 +4,7 @@
 #include <array.h>
 #include <bitmap.h>
 #include <synch.h>
+#include <proc.h>
 
 struct pid_info{
     pid_t pid;
@@ -14,6 +15,7 @@ struct pid_info{
     struct array* child_pid_info; //store pointer to pid_info of child
     struct lock* pid_lock;
     struct cv* pid_cv;
+    struct proc* p;
 };
 
 

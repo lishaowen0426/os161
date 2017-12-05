@@ -336,10 +336,11 @@ file      proc/proc.c
 # Virtual memory system
 # (you will probably want to add stuff here while doing the VM assignment)
 #
+defoption clevervm
+optfile clevervm      vm/kmalloc.c
+optfile clevervm  vm/addrspace.c
 
-file      vm/kmalloc.c
-
-optofffile dumbvm   vm/addrspace.c
+#optfile clevervm    vm/clevervm.c
 
 #
 # Network
@@ -466,3 +467,4 @@ file        pidtable/pid.c
 file        syscall/sys__exit.c
 file        syscall/sys_waitpid.c
 file        syscall/sys_execv.c
+file        syscall/sys_sbrk.c

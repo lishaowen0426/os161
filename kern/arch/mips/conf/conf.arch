@@ -70,8 +70,11 @@ machine mips file    vm/copyinout.c		# copyin/out et al.
 # For the early assignments, we supply a very stupid MIPS-only skeleton
 # of a VM system. It is just barely capable of running a single userlevel
 # program as long as that program's not very large.
-defoption   dumbvm
-machine mips optfile dumbvm    arch/mips/vm/dumbvm.c
+#defoption   dumbvm
+#machine mips optfile dumbvm    arch/mips/vm/dumbvm.c
+defoption clevervm
+machine mips optfile clevervm  vm/clevervm.c
+
 
 #
 # System call layer

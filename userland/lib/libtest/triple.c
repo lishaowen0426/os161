@@ -83,6 +83,7 @@ dowait(int index, int pid)
 void
 triple(const char *prog)
 {
+
 	pid_t pids[3];
 	int i, failures = 0;
 	char *args[2];
@@ -93,7 +94,9 @@ triple(const char *prog)
 
 	warnx("Starting: running three copies of %s...", prog);
 
+
 	for (i=0; i<3; i++) {
+		warnx("spawnv: %d\n",i);
 		pids[i]=spawnv(args[0], args);
 	}
 

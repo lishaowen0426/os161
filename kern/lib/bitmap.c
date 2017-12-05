@@ -103,6 +103,7 @@ bitmap_alloc(struct bitmap *b, unsigned *index)
         unsigned offset;
 
         for (ix=0; ix<maxix; ix++) {
+
                 if (b->v[ix]!=WORD_ALLBITS) {
                         for (offset = 0; offset < BITS_PER_WORD; offset++) {
                                 WORD_TYPE mask = ((WORD_TYPE)1) << offset;

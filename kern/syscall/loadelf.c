@@ -74,6 +74,7 @@
  * change this code to not use uiomove, be sure to check for this case
  * explicitly.
  */
+
 static
 int
 load_segment(struct addrspace *as, struct vnode *v,
@@ -109,7 +110,7 @@ load_segment(struct addrspace *as, struct vnode *v,
 	}
 
 	if (u.uio_resid != 0) {
-		/* short read; problem with executable? */
+
 		kprintf("ELF: short read on segment - file truncated?\n");
 		return ENOEXEC;
 	}
@@ -128,6 +129,7 @@ load_segment(struct addrspace *as, struct vnode *v,
 	 * diagnostic tool. Note that it must be disabled again before
 	 * you submit your code for grading.
 	 */
+
 #if 0
 	{
 		size_t fillamt;
@@ -145,6 +147,7 @@ load_segment(struct addrspace *as, struct vnode *v,
 	return result;
 }
 
+
 /*
  * Load an ELF executable user program into the current address space.
  *
@@ -161,7 +164,6 @@ load_elf(struct vnode *v, vaddr_t *entrypoint)
 	struct addrspace *as;
 
 	as = proc_getas();
-
 	/*
 	 * Read the executable header from offset 0 in the file.
 	 */
@@ -262,6 +264,7 @@ load_elf(struct vnode *v, vaddr_t *entrypoint)
 	 * Now actually load each segment.
 	 */
 
+
 	for (i=0; i<eh.e_phnum; i++) {
 		off_t offset = eh.e_phoff + i*eh.e_phentsize;
 		uio_kinit(&iov, &ku, &ph, sizeof(ph), offset, UIO_READ);
@@ -272,15 +275,15 @@ load_elf(struct vnode *v, vaddr_t *entrypoint)
 		}
 
 		if (ku.uio_resid != 0) {
-			/* short read; problem with executable? */
+
 			kprintf("ELF: short read on phdr - file truncated?\n");
 			return ENOEXEC;
 		}
 
 		switch (ph.p_type) {
-		    case PT_NULL: /* skip */ continue;
-		    case PT_PHDR: /* skip */ continue;
-		    case PT_MIPS_REGINFO: /* skip */ continue;
+		    case PT_NULL:  continue;
+		    case PT_PHDR: continue;
+		    case PT_MIPS_REGINFO:  continue;
 		    case PT_LOAD: break;
 		    default:
 			kprintf("loadelf: unknown segment type %d\n",
@@ -295,6 +298,7 @@ load_elf(struct vnode *v, vaddr_t *entrypoint)
 			return result;
 		}
 	}
+
 
 	result = as_complete_load(as);
 	if (result) {

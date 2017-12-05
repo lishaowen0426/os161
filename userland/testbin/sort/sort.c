@@ -39,6 +39,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <err.h>
+#include <stdio.h>
 
 /* Larger than physical memory */
 #define SIZE  (144*1024)
@@ -91,7 +92,6 @@ sort(int *arr, int size)
 }
 
 ////////////////////////////////////////////////////////////
-
 static int A[SIZE];
 
 static
@@ -129,7 +129,9 @@ int
 main(void)
 {
 	initarray();
+
 	sort(A, SIZE);
+
 	check();
 	return 0;
 }

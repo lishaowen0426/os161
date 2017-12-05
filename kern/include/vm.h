@@ -38,6 +38,45 @@
 
 
 #include <machine/vm.h>
+#include <vnode.h>
+#include <bitmap.h>
+#include <synch.h>
+#include <array.h>
+#include <addrspace.h>
+struct addrspace;
+//struct for frametable entry
+struct frame
+{
+  /*
+  struct array * as_arr;
+  //int as_id;
+  paddr_t paddr; //aligned to page size
+  vaddr_t vaddr; //even though multi addrspaces may point to the same physical frame, they have to have the same vaddr after as_copy
+  uint8_t used;
+  unsigned long size;
+
+  uint8_t kframe;
+  */
+
+  struct addrspace* as;
+  uint8_t used;
+  uint8_t kernel;
+  vaddr_t vaddr;
+  size_t size;
+
+};
+
+extern int vm_initialized;
+extern struct frame* coremap;
+extern paddr_t freepage;
+extern struct spinlock* coremap_lock;
+
+extern struct vnode* swap_disk;
+extern struct bitmap* swap_disk_bitmap;
+extern struct lock*  swap_disk_lock;
+extern unsigned long total_frame_num;
+
+#define COREMAP_INDEX(PADDR)   ((PADDR&PAGE_FRAME)>>12)
 
 /* Fault-type arguments to vm_fault() */
 #define VM_FAULT_READ        0    /* A read was attempted */
@@ -60,4 +99,9 @@ void vm_tlbshootdown_all(void);
 void vm_tlbshootdown(const struct tlbshootdown *);
 
 
+/*get a single page for use in vm fault*/
+paddr_t get_single_ppage(vaddr_t vaddr,struct addrspace* as);
+
+paddr_t
+ram_evict(vaddr_t newvaddr, struct addrspace* newas);
 #endif /* _VM_H_ */

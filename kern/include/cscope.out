@@ -1,4 +1,4 @@
-cscope 15 $HOME/os161/src/kern/include               0000036456
+cscope 15 $HOME/os161/src/kern/include               0000037796
 	@addrspace.h
 
 30 #iâdeà
@@ -19,67 +19,215 @@ _ADDRSPACE_H_
 	~"İt-dumbvm.h
 "
 
-41 
+40 
+	~<vnode.h
+>
+
+41 
+	~<synch.h
+>
+
+42 
 	gvnode
 ;
 
-51 
-	saddr¥aû
- {
+51 
+	#PDIRMASK
+ 0xff000000
 
-52 #ià
-OPT_DUMBVM
+	)
 
+52 
+	#PTEMASK
+ 0x00fff000
 
-53 
-vaddr_t
- 
-	mas_vba£1
-;
+	)
 
-54 
-·ddr_t
- 
-	mas_pba£1
-;
+54 
+	#EXTRACT_DIR_INDEX
+(
+vaddr
+è((vaddr&
+PDIRMASK
+)>>24)
 
-55 
-size_t
- 
-	mas_Åages1
-;
+	)
 
-56 
-vaddr_t
- 
-	mas_vba£2
-;
+55 
+	#EXTRACT_PTE_INDEX
+(
+vaddr
+è((vaddr&
+PTEMASK
+)>>12)
 
-57 
-·ddr_t
- 
-	mas_pba£2
-;
+	)
+
+57 
+	s±e
+{
 
 58 
-size_t
+vaddr_t
  
-	mas_Åages2
+	mv·g’um
 ;
 
 59 
 ·ddr_t
  
+	mµag’um
+;
+
+60 
+št8_t
+ 
+	mv®id
+;
+
+61 
+št8_t
+ 
+	m®loÿ‹d
+;
+
+62 
+št8_t
+ 
+	m´e£Á
+;
+
+63 
+	mæag
+;
+
+64 
+	m£g_num
+;
+
+66 
+	m·ge_š_£g
+;
+
+67 
+off_t
+ 
+	msw­_disk_off£t
+;
+
+68 
+št8_t
+ 
+	mcİy_Ú_wr™e
+;
+
+71 
+	s±abË_dœ
+{
+
+72 
+±e
+* 
+	m±e
+;
+
+73 
+št8_t
+ 
+	mdœ_num
+;
+
+76 
+	saddr¥aû
+ {
+
+77 #ià
+OPT_DUMBVM
+
+
+78 
+vaddr_t
+ 
+	mas_vba£1
+;
+
+79 
+·ddr_t
+ 
+	mas_pba£1
+;
+
+80 
+size_t
+ 
+	mas_Åages1
+;
+
+81 
+vaddr_t
+ 
+	mas_vba£2
+;
+
+82 
+·ddr_t
+ 
+	mas_pba£2
+;
+
+83 
+size_t
+ 
+	mas_Åages2
+;
+
+84 
+·ddr_t
+ 
 	mas_¡ackpba£
 ;
 
-106 
+87 
+	mas_id
+;
+
+88 
+±abË_dœ
+* 
+	mdœ
+;
+
+89 
+vnode
+* 
+	m´og
+;
+
+90 
+lock
+* 
+	mas_lock
+;
+
+92 
+vaddr_t
+ 
+	m¡acktİ
+;
+
+93 
+vaddr_t
+ 
+	m¡ackba£
+;
+
+139 
 addr¥aû
  *
 as_ü—‹
 ();
 
-107 
+140 
 as_cİy
 (
 addr¥aû
@@ -87,23 +235,25 @@ addr¥aû
 ¤c
 , addr¥aû **
 »t
+, 
+Ãw_asid
 );
 
-108 
+141 
 as_aùiv©e
 ();
 
-109 
+142 
 as_d—ùiv©e
 ();
 
-110 
+143 
 as_de¡roy
 (
 addr¥aû
  *);
 
-112 
+145 
 as_defše_»giÚ
 (
 addr¥aû
@@ -111,7 +261,7 @@ addr¥aû
 as
 ,
 
-113 
+146 
 vaddr_t
  
 vaddr
@@ -121,19 +271,23 @@ size_t
 sz
 ,
 
-114 
+147 
+£g_num
+,
+
+148 
 »adabË
 ,
 
-115 
+149 
 wr™—bË
 ,
 
-116 
+150 
 execubË
 );
 
-117 
+151 
 as_´•¬e_lßd
 (
 addr¥aû
@@ -141,7 +295,7 @@ addr¥aû
 as
 );
 
-118 
+152 
 as_com¶‘e_lßd
 (
 addr¥aû
@@ -149,7 +303,7 @@ addr¥aû
 as
 );
 
-119 
+153 
 as_defše_¡ack
 (
 addr¥aû
@@ -161,7 +315,7 @@ vaddr_t
 š™¡ack±r
 );
 
-129 
+163 
 lßd_–f
 (
 vnode
@@ -3557,75 +3711,85 @@ _PID_H_
 	~<synch.h
 >
 
-8 
+7 
+	~<´oc.h
+>
+
+9 
 	spid_šfo
 {
 
-9 
+10 
 pid_t
  
 	mpid
 ;
 
-10 
+11 
 pid_t
  
 	m·»Á_pid
 ;
 
-11 
+12 
 	m´oc_ex™ed
 ;
 
-12 
+13 
 	mex™_code
 ;
 
-13 
+14 
 	mwa™ed
 ;
 
-14 
+15 
 ¬¿y
 * 
 	mchd_pid_šfo
 ;
 
-15 
+16 
 lock
 * 
 	mpid_lock
 ;
 
-16 
+17 
 cv
 * 
 	mpid_cv
 ;
 
-20 
+18 
+´oc
+* 
+	mp
+;
+
+22 
 	spid_bË
 {
 
-21 
+23 
 ¬¿y
 * 
 	m¬r
 ;
 
-22 
+24 
 b™m­
 * 
 	mb™m­
 ;
 
-23 
+25 
 lock
 * 
 	mlock
 ;
 
-26 
+28 
 pid_bË_ü—‹
 (
 pid_bË
@@ -3633,7 +3797,7 @@ pid_bË
 ±
 );
 
-31 
+33 
 g‘_pid
 (
 pid_bË
@@ -3645,7 +3809,7 @@ pid_t
 pid
 );
 
-34 
+36 
 add_pid
 (
 pid_bË
@@ -3657,7 +3821,7 @@ pid_šfo
 pi
 );
 
-36 
+38 
 pid_šfo
 * 
 g‘_´oc
@@ -3671,7 +3835,7 @@ pid_t
 pid
 );
 
-41 
+43 
 ş—r_pid
  (
 pid_bË
@@ -3683,7 +3847,7 @@ pid_šfo
 pi
 );
 
-44 
+46 
 pid_bË
  
 pidbË
@@ -6353,29 +6517,145 @@ _VM_H_
 	~<machše/vm.h
 >
 
-43 
+41 
+	~<vnode.h
+>
+
+42 
+	~<b™m­.h
+>
+
+43 
+	~<synch.h
+>
+
+44 
+	~<¬¿y.h
+>
+
+45 
+	~<addr¥aû.h
+>
+
+46 
+	gaddr¥aû
+;
+
+48 
+	säame
+
+
+50 
+¬¿y
+ * 
+	mas_¬r
+;
+
+52 
+·ddr_t
+ 
+	m·ddr
+;
+
+53 
+vaddr_t
+ 
+	mvaddr
+;
+
+54 
+ušt8_t
+ 
+	mu£d
+;
+
+55 
+	msize
+;
+
+57 
+ušt8_t
+ 
+	mkäame
+;
+
+60 
+vm_š™Ÿlized
+;
+
+61 
+äame
+* 
+äam‘abË_±r
+;
+
+62 
+·ddr_t
+ 
+ä“·ge
+;
+
+63 
+¥šlock
+* 
+äam‘abË_lock
+;
+
+65 
+vnode
+* 
+sw­_disk
+;
+
+66 
+b™m­
+* 
+sw­_disk_b™m­
+;
+
+67 
+lock
+* 
+sw­_disk_lock
+;
+
+69 
+tÙ®_äame_num
+;
+
+70 
+	#FRAME_INDEX
+(
+PADDR
+è((PADDR&
+PAGE_FRAME
+)>>12)
+
+	)
+
+73 
 	#VM_FAULT_READ
  0
 
 	)
 
-44 
+74 
 	#VM_FAULT_WRITE
  1
 
 	)
 
-45 
+75 
 	#VM_FAULT_READONLY
  2
 
 	)
 
-49 
+79 
 vm_boÙ¡¿p
 ();
 
-52 
+82 
 vm_çuÉ
 (
 çuÉty³
@@ -6385,7 +6665,7 @@ vaddr_t
 çuÉadd»ss
 );
 
-55 
+85 
 vaddr_t
  
 ®loc_k·ges
@@ -6393,7 +6673,7 @@ vaddr_t
 Åages
 );
 
-56 
+86 
 ä“_k·ges
 (
 vaddr_t
@@ -6401,15 +6681,29 @@ vaddr_t
 addr
 );
 
-59 
+89 
 vm_bshoÙdown_®l
 ();
 
-60 
+90 
 vm_bshoÙdown
 (cÚ¡ 
 bshoÙdown
  *);
+
+94 
+·ddr_t
+ 
+g‘_sšgË_µage
+(
+vaddr_t
+ 
+vaddr
+,
+addr¥aû
+* 
+as
+);
 
 	@vnode.h
 

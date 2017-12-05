@@ -165,7 +165,7 @@ void cpu_halt(void);
 #define IPI_TLBSHOOTDOWN	3	/* MMU mapping(s) need invalidation */
 
 void ipi_send(struct cpu *target, int code);
-void ipi_broadcast(int code);
+unsigned int ipi_broadcast(int code,struct tlbshootdown *mapping);
 void ipi_tlbshootdown(struct cpu *target, const struct tlbshootdown *mapping);
 
 void interprocessor_interrupt(void);

@@ -224,6 +224,7 @@ kmain(char *arguments)
     pi->pid_lock=lock_create("l");
     pi->pid_cv=cv_create("cv");
     pi->child_pid_info=array_create();
+    pi->p=kproc;
     kproc->pi=pi;
     add_pid(&pidtable,pi);
 

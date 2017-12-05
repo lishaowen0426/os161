@@ -1,0 +1,1170 @@
+cscope 15 $HOME/os161/src/userland/include               0000005629
+	@assert.h
+
+30 #iâdeà
+_ASSERT_H_
+
+
+31 
+	#_ASSERT_H_
+
+
+	)
+
+36 #undeà
+as£¹
+
+
+41 
+__bad_as£¹
+(cÚ¡ *
+fe
+, 
+lše
+, cÚ¡ *
+msg
+);
+
+47 #ifdeà
+NDEBUG
+
+
+50 
+	#as£¹
+(
+x
+è(()(x)è
+
+	)
+
+52 
+	#as£¹
+(
+x
+è(()0è
+
+	)
+
+56 
+	#as£¹
+(
+x
+è((xè? ()0 : 
+	`__bad_as£¹
+(
+__FILE__
+, 
+__LINE__
+, #x))
+
+	)
+
+	@err.h
+
+30 #iâdeà
+_ERR_H_
+
+
+31 
+	#_ERR_H_
+
+
+	)
+
+33 
+	~<sys/cdefs.h
+>
+
+34 
+	~<k”n/ty³s.h
+>
+
+48 
+w¬n
+(cÚ¡ *
+fmt
+, ...);
+
+49 
+w¬nx
+(cÚ¡ *
+fmt
+, ...);
+
+50 
+__DEAD
+ 
+”r
+(
+ex™code
+, cÚ¡ *
+fmt
+, ...);
+
+51 
+__DEAD
+ 
+”rx
+(
+ex™code
+, cÚ¡ *
+fmt
+, ...);
+
+53 
+vw¬n
+(cÚ¡ *
+fmt
+, 
+__va_li¡
+);
+
+54 
+vw¬nx
+(cÚ¡ *
+fmt
+, 
+__va_li¡
+);
+
+55 
+__DEAD
+ 
+v”r
+(
+ex™code
+, cÚ¡ *
+fmt
+, 
+__va_li¡
+);
+
+56 
+__DEAD
+ 
+v”rx
+(
+ex™code
+, cÚ¡ *
+fmt
+, 
+__va_li¡
+);
+
+	@errno.h
+
+30 #iâdeà
+_ERRNO_H_
+
+
+31 
+	#_ERRNO_H_
+
+
+	)
+
+34 
+	~<k”n/”ºo.h
+>
+
+37 
+”ºo
+;
+
+	@fcntl.h
+
+31 
+	~<uni¡d.h
+>
+
+	@limits.h
+
+30 #iâdeà
+_LIMITS_H_
+
+
+31 
+	#_LIMITS_H_
+
+
+	)
+
+38 
+	~<k”n/lim™s.h
+>
+
+41 
+	#NAME_MAX
+ 
+__NAME_MAX
+
+
+	)
+
+42 
+	#PATH_MAX
+ 
+__PATH_MAX
+
+
+	)
+
+43 
+	#ARG_MAX
+ 
+__ARG_MAX
+
+
+	)
+
+44 
+	#PID_MIN
+ 
+__PID_MIN
+
+
+	)
+
+45 
+	#PID_MAX
+ 
+__PID_MAX
+
+
+	)
+
+46 
+	#PIPE_BUF
+ 
+__PIPE_BUF
+
+
+	)
+
+47 
+	#NGROUPS_MAX
+ 
+__NGROUPS_MAX
+
+
+	)
+
+48 
+	#LOGIN_NAME_MAX
+ 
+__LOGIN_NAME_MAX
+
+
+	)
+
+49 
+	#OPEN_MAX
+ 
+__OPEN_MAX
+
+
+	)
+
+50 
+	#IOV_MAX
+ 
+__IOV_MAX
+
+
+	)
+
+	@setjmp.h
+
+30 #iâdeà
+_SETJMP_H_
+
+
+31 
+	#_SETJMP_H_
+
+
+	)
+
+34 
+	~<machše/£tjmp.h
+>
+
+49 
+£tjmp
+(
+jmp_buf
+ 
+jb
+);
+
+50 
+lÚgjmp
+(
+jmp_buf
+ 
+jb
+, 
+code
+);
+
+	@signal.h
+
+30 
+	~<k”n/sigÇl.h
+>
+
+	@stdarg.h
+
+30 #iâdeà
+_STDARG_H_
+
+
+31 
+	#_STDARG_H_
+
+
+	)
+
+33 
+	~<k”n/ty³s.h
+>
+
+43 
+__va_li¡
+ 
+	tva_li¡
+;
+
+45 #ià
+__GNUC__
+ < 4 || (__GNUC__ =ğ4 && 
+__GNUC_MINOR__
+ < 8)
+
+46 
+	#va_¡¬t
+(
+­
+, 
+fmt
+è
+	`__butš_¡d¬g_¡¬t
+×p, fmt)
+
+	)
+
+48 
+	#va_¡¬t
+(
+­
+, 
+fmt
+è
+	`__butš_va_¡¬t
+×p, fmt)
+
+	)
+
+50 
+	#va_¬g
+(
+­
+,
+t
+è
+	`__butš_va_¬g
+×p,t)
+
+	)
+
+51 
+	#va_cİy
+(
+­1
+,
+­2
+è
+	`__butš_va_cİy
+×p1,­2)
+
+	)
+
+52 
+	#va_’d
+(
+­
+è
+	`__butš_va_’d
+×p)
+
+	)
+
+	@stdbool.h
+
+30 #iâdeà
+_STDBOOL_H_
+
+
+31 
+	#_STDBOOL_H_
+
+
+	)
+
+33 
+_BoŞ
+ 
+	tboŞ
+;
+
+34 
+	#Œue
+ 1
+
+	)
+
+35 
+	#çl£
+ 0
+
+	)
+
+	@stdint.h
+
+30 #iâdeà
+_STDINT_H_
+
+
+31 
+	#_STDINT_H_
+
+
+	)
+
+37 
+	~<k”n/ty³s.h
+>
+
+39 
+__i8
+ 
+	tšt8_t
+;
+
+40 
+__i16
+ 
+	tšt16_t
+;
+
+41 
+__i32
+ 
+	tšt32_t
+;
+
+42 
+__i64
+ 
+	tšt64_t
+;
+
+43 
+__u8
+ 
+	tušt8_t
+;
+
+44 
+__u16
+ 
+	tušt16_t
+;
+
+45 
+__u32
+ 
+	tušt32_t
+;
+
+46 
+__u64
+ 
+	tušt64_t
+;
+
+48 
+__šŒ_t
+ 
+	tšŒ_t
+;
+
+49 
+__ušŒ_t
+ 
+	tušŒ_t
+;
+
+	@stdio.h
+
+30 #iâdeà
+_STDIO_H_
+
+
+31 
+	#_STDIO_H_
+
+
+	)
+
+37 
+	~<k”n/ty³s.h
+>
+
+38 
+	~<ty³s/size_t.h
+>
+
+39 
+	~<sys/nuÎ.h
+>
+
+42 
+	#EOF
+ (-1)
+
+	)
+
+48 
+__v´štf
+((*
+£ndfunc
+)(*
+ş›Ád©a
+, cÚ¡ *, 
+size_t
+ 
+Ën
+),
+
+49 *
+ş›Ád©a
+,
+
+50 cÚ¡ *
+fmt
+,
+
+51 
+__va_li¡
+ 
+­
+);
+
+54 
+	`´štf
+(cÚ¡ *
+fmt
+, ...);
+
+55 
+	`v´štf
+(cÚ¡ *
+fmt
+, 
+__va_li¡
+ 
+­
+);
+
+56 
+	`¢´štf
+(*
+buf
+, 
+size_t
+ 
+Ën
+, cÚ¡ *
+fmt
+, ...);
+
+57 
+	`v¢´štf
+(*
+buf
+, 
+size_t
+ 
+Ën
+, cÚ¡ *
+fmt
+, 
+__va_li¡
+ 
+­
+);
+
+60 
+	`puts
+(const *);
+
+64 
+	`__puts
+(const *);
+
+67 
+	`putch¬
+();
+
+70 
+	`g‘ch¬
+();
+
+	@stdlib.h
+
+30 #iâdeà
+_STDLIB_H_
+
+
+31 
+	#_STDLIB_H_
+
+
+	)
+
+33 
+	~<k”n/ty³s.h
+>
+
+34 
+	~<ty³s/size_t.h
+>
+
+35 
+	~<sys/nuÎ.h
+>
+
+40 
+©oi
+(const *);
+
+45 
+abÜt
+();
+
+51 
+ex™
+(
+code
+);
+
+57 *
+g‘’v
+(cÚ¡ *
+v¬
+);
+
+62 
+sy¡em
+(cÚ¡ *
+commªd
+);
+
+67 
+	#RAND_MAX
+ 0x7fffffff
+
+	)
+
+68 
+¿ndom
+();
+
+69 
+¤ªdom
+(
+£ed
+);
+
+70 *
+š™¡©e
+(, *, 
+size_t
+);
+
+71 *
+£t¡©e
+(*);
+
+76 *
+m®loc
+(
+size_t
+ 
+size
+);
+
+77 
+ä“
+(*
+±r
+);
+
+82 
+qsÜt
+(*
+d©a
+, 
+num
+, 
+size_t
+ 
+size
+,
+
+83 (*
+f
+)(const *, const *));
+
+	@string.h
+
+30 #iâdeà
+_STRING_H_
+
+
+31 
+	#_STRING_H_
+
+
+	)
+
+33 
+	~<k”n/ty³s.h
+>
+
+34 
+	~<ty³s/size_t.h
+>
+
+35 
+	~<sys/nuÎ.h
+>
+
+40 *
+¡rÿt
+(*, const *);
+
+41 *
+¡rıy
+(*, const *);
+
+42 *
+¡rchr
+(const *, );
+
+43 *
+¡¼chr
+(const *, );
+
+44 
+¡rcmp
+(const *, const *);
+
+45 
+size_t
+ 
+¡¾’
+(const *);
+
+46 *
+¡¹ok_r
+(*, const *, **);
+
+47 *
+¡¹ok
+(*, const *);
+
+49 *
+mem£t
+(*, 
+c
+, 
+size_t
+);
+
+50 *
+memıy
+(*, cÚ¡ *, 
+size_t
+);
+
+51 *
+memmove
+(*, cÚ¡ *, 
+size_t
+);
+
+52 
+memcmp
+(cÚ¡ *, cÚ¡ *, 
+size_t
+);
+
+57 cÚ¡ *
+¡»¼Ü
+(
+”rcode
+);
+
+62 
+bz”o
+(*, 
+size_t
+);
+
+	@time.h
+
+31 
+	~<uni¡d.h
+>
+
+	@unistd.h
+
+30 #iâdeà
+_UNISTD_H_
+
+
+31 
+	#_UNISTD_H_
+
+
+	)
+
+33 
+	~<sys/cdefs.h
+>
+
+34 
+	~<sys/ty³s.h
+>
+
+41 
+	~<k”n/fú.h
+>
+
+42 
+	~<k”n/ioùl.h
+>
+
+43 
+	~<k”n/»boÙ.h
+>
+
+44 
+	~<k”n/£ek.h
+>
+
+45 
+	~<k”n/time.h
+>
+
+46 
+	~<k”n/uni¡d.h
+>
+
+47 
+	~<k”n/wa™.h
+>
+
+112 
+__DEAD
+ 
+_ex™
+(
+code
+);
+
+113 
+execv
+(cÚ¡ *
+´og
+, *cÚ¡ *
+¬gs
+);
+
+114 
+pid_t
+ 
+fÜk
+();
+
+115 
+pid_t
+ 
+wa™pid
+Õid_ˆ
+pid
+, *
+»tuºcode
+, 
+æags
+);
+
+121 
+İ’
+(cÚ¡ *
+f’ame
+, 
+æags
+, ...);
+
+122 
+ssize_t
+ 
+»ad
+(
+fehªdË
+, *
+buf
+, 
+size_t
+ 
+size
+);
+
+123 
+ssize_t
+ 
+wr™e
+(
+fehªdË
+, cÚ¡ *
+buf
+, 
+size_t
+ 
+size
+);
+
+124 
+şo£
+(
+fehªdË
+);
+
+125 
+»boÙ
+(
+code
+);
+
+126 
+sync
+();
+
+128 
+rmdœ
+(cÚ¡ *
+dœÇme
+);
+
+131 
+pid_t
+ 
+g‘pid
+();
+
+132 
+ioùl
+(
+fehªdË
+, 
+code
+, *
+buf
+);
+
+133 
+off_t
+ 
+l£ek
+(
+fehªdË
+, off_ˆ
+pos
+, 
+code
+);
+
+134 
+fsync
+(
+fehªdË
+);
+
+135 
+árunÿ‹
+(
+fehªdË
+, 
+off_t
+ 
+size
+);
+
+136 
+»move
+(cÚ¡ *
+f’ame
+);
+
+137 
+»Çme
+(cÚ¡ *
+Şdfe
+, cÚ¡ *
+Ãwfe
+);
+
+138 
+lšk
+(cÚ¡ *
+Şdfe
+, cÚ¡ *
+Ãwfe
+);
+
+140 
+chdœ
+(cÚ¡ *
+·th
+);
+
+143 *
+sbrk
+(
+__šŒ_t
+ 
+chªge
+);
+
+144 
+ssize_t
+ 
+g‘dœ’Œy
+(
+fehªdË
+, *
+buf
+, 
+size_t
+ 
+buæ’
+);
+
+145 
+symlšk
+(cÚ¡ *
+rg‘
+, cÚ¡ *
+lškÇme
+);
+
+146 
+ssize_t
+ 
+»adlšk
+(cÚ¡ *
+·th
+, *
+buf
+, 
+size_t
+ 
+buæ’
+);
+
+147 
+dup2
+(
+fehªdË
+, 
+ÃwhªdË
+);
+
+148 
+pe
+(
+fehªdËs
+[2]);
+
+149 
+__time
+(
+time_t
+ *
+£cÚds
+, *
+Çno£cÚds
+);
+
+150 
+ssize_t
+ 
+__g‘cwd
+(*
+buf
+, 
+size_t
+ 
+buæ’
+);
+
+158 
+execvp
+(cÚ¡ *
+´og
+, *cÚ¡ *
+¬gs
+);
+
+159 *
+g‘cwd
+(*
+buf
+, 
+size_t
+ 
+buæ’
+);
+
+160 
+time_t
+ 
+time
+Ñime_ˆ*
+£cÚds
+);
+
+	@
+1
+.
+0
+15
+128
+assert.h
+err.h
+errno.h
+fcntl.h
+limits.h
+setjmp.h
+signal.h
+stdarg.h
+stdbool.h
+stdint.h
+stdio.h
+stdlib.h
+string.h
+time.h
+unistd.h

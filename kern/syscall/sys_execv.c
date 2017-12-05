@@ -13,6 +13,8 @@
 #include <proc.h>
 int sys_execv(const char* program,char** args){
     //check if program and args pointer null
+    //kprintf("enter exec\n");
+    //kprintf("exec curproc is:%d\n",curproc->pi->pid);
     if(!program||!args){
         return EFAULT;
     }
@@ -28,6 +30,7 @@ int sys_execv(const char* program,char** args){
     if(new_as==NULL) return ENOMEM;
     //get the old address space
     struct addrspace* old_as=proc_getas();
+    //new_as->as_id=old_as->as_id;
     KASSERT(old_as!=NULL);
     int err;
     char* name=NULL;
@@ -46,6 +49,7 @@ int sys_execv(const char* program,char** args){
     vaddr_t entrypoint,stackptr;
     proc_setas(new_as);
     as_activate();
+    //kprintf("before load elf in exec\n");
     err=load_elf(v,&entrypoint);
     if(err){
         as_deactivate();
@@ -57,18 +61,18 @@ int sys_execv(const char* program,char** args){
         return err;
     }
 
-    vfs_close(v);
+    //vfs_close(v);
     //make a stack in the new address space
     err=as_define_stack(new_as,&stackptr);
     if(err){
         as_deactivate();
         proc_setas(old_as);
         as_activate();
-
+        vfs_close(v);
         as_destroy(new_as);
         return err;
     }
-
+    //kprintf("after define stack in exec\n");
     //set back to copyinout
     as_deactivate();
     proc_setas(old_as);
@@ -201,8 +205,11 @@ int sys_execv(const char* program,char** args){
 
     //finished copy everything
     //now we can destroy the old address space
-    as_destroy(old_as);
 
+    //kprintf("before destroy old as\n");
+    as_destroy(old_as);
+    //kprintf("after destroy old as\n");
     //switch to the new process
+    //kprintf("before enter new procc\n");
     enter_new_process(argc,(userptr_t)argv,NULL,stackptr,entrypoint);
 }
